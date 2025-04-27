@@ -1,0 +1,12 @@
+fastapi==0.95.0
+uvicorn==0.21.1
+pydantic==1.10.7
+pyspark==3.3.1
+pandas==2.0.0
+boto3==1.26.118
+aiokafka==0.8.0
+nltk==3.8.1
+keybert==0.7.0
+sentence-transformers==2.2.2
+python-dotenv==1.0.0
+httpx==0.24.0 

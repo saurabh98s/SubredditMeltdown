@@ -1,0 +1,16 @@
+Title	Body	Labels
+Scaffold project structure	**Description:** Create GitHub repo and add top-level folders:/data_ingestion  /pyspark_jobs  /frontend  /infra  /docs  /tests.	infra
+Download raw Reddit data	**Description:** Write `download arctic shift` to pull monthly dumps (2008-present) or guide users through the Arctic-Shift UI export.	data-ingestion
+Explore raw schema	**Description:** Notebook that loads one month, prints JSON schema, and basic counts per subreddit and does all the EDA analysis needed.	data-ingestion
+Preprocess & clean posts	**Description:** PySpark job `clean_posts.py`: flatten JSON, drop deleted/removed, keep English, convert to Parquet files.	etl
+Upload cleaned data to S3	**Description:** Script or Makefile target that copies Parquet to an S3 bucket path `s3://mh-trends/cleaned/`.	data-ingestion,infra
+Sentiment time-series analysis	**Description:** PySpark job that computes daily average sentiment per subreddit and saves to `s3://mh-trends/analytics/sentiment_daily`.	analysis
+Correlate sentiment with major events	**Description:** Join sentiment series with a CSV of major world events (pandemics, elections, market crashes) and calculate correlation metrics.	analysis
+Keyword tracking by timeframe	**Description:** PySpark job that extracts top keywords per selected period using KeyBERT; store results in S3.	analysis,nlp
+API layer	**Description:** FastAPI service that serves sentiment, event correlations, and keywords from S3 or DeltaLake.	backend,api
+Frontend scaffold	**Description:** Create React/Next.js app; set up routing and layout.	frontend
+Time-series & filter UI	**Description:** Build chart component showing sentiment over time with date/subreddit filters.	frontend
+Event overlay & keyword panel	**Description:** Add UI to overlay major events on the chart and display top keywords for selected window.	frontend
+Deployment with Docker Compose	**Description:** Compose file that starts API, frontend, Spark (local), and MinIO/S3 emulator for demo.	infra,devops
+Demo check & slides	**Description:** Write `docs` with step-by-step demo.	docs,presentation
+Slides	**Description:** Include step-by-step demo and prepare a slide deck.	docs,presentation
