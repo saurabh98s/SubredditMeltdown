@@ -1,0 +1,33 @@
+# Data processing
+pyspark==3.3.1
+pandas==2.0.0
+numpy==1.24.3
+matplotlib==3.7.1
+seaborn==0.12.2
+
+# Natural language processing
+nltk==3.8.1
+keybert==0.7.0
+sentence-transformers==2.2.2
+langdetect==1.0.9
+
+# Web API
+fastapi==0.95.0
+uvicorn==0.21.1
+pydantic==1.10.7
+starlette==0.26.1
+
+# Storage and networking
+boto3==1.26.118
+aiokafka==0.8.0
+httpx==0.24.0
+requests==2.28.2
+python-dateutil==2.8.2
+python-dotenv==1.0.0
+
+# Development
+jupyter==1.0.0
+pytest==7.3.1
+black==23.3.0
+isort==5.12.0
+flake8==6.0.0 
