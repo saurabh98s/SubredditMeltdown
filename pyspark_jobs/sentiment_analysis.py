@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
-from pyspark.sql import SparkSession, Window
-from pyspark.sql.functions import (
-    col, lit, date_format, to_date, avg, count, 
-    from_unixtime, unix_timestamp, explode, array, 
-    udf, pandas_udf, PandasUDFType
-)
-from pyspark.sql.types import FloatType, ArrayType, StringType, StructType, StructField
 import argparse
 import os
 import boto3
 import json
 import logging
-import nltk
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import pandas as pd
-import numpy as np
+
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from pyspark.ml.feature import Tokenizer, StopWordsRemover
+from pyspark.sql.types import FloatType, StringType, StructType, StructField
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, date_format, avg, count, from_unixtime, explode, udf, when, lower
 
 # Configure logging
 logging.basicConfig(
@@ -23,40 +18,37 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Initialize NLTK resources (download if needed)
-try:
-    nltk.data.find('vader_lexicon')
-except LookupError:
-    nltk.download('vader_lexicon')
+def get_sentiment(text):
+    analyzer = SentimentIntensityAnalyzer()
+    if text:
+        scores = analyzer.polarity_scores(text)
+        return (scores['neg'], scores['neu'], scores['pos'], scores['compound'])
+    else:
+        return (0.0, 0.0, 0.0, 0.0)
 
-# Define a pandas UDF for VADER sentiment analysis
-@pandas_udf(FloatType())
-def analyze_sentiment(texts):
-    """
-    Analyze sentiment of texts using VADER SentimentIntensityAnalyzer.
-    Returns a sentiment score between -1 (negative) and 1 (positive).
-    """
-    vader = SentimentIntensityAnalyzer()
+
+def categorize_sentiment(compound):
+    if compound >= 0.05:
+        return "Positive"
+    elif compound <= -0.05:
+        return "Negative"
+    else:
+        return "Neutral"
     
-    def get_sentiment(text):
-        if text is None or text == "" or text == "[deleted]" or text == "[removed]":
-            return None
-        try:
-            scores = vader.polarity_scores(text)
-            # Compound score is between -1 and 1
-            return scores['compound']
-        except:
-            return None
-    
-    return pd.Series([get_sentiment(text) for text in texts])
+def get_compound_sentiment(text):
+    analyzer = SentimentIntensityAnalyzer()
+    if text is None or text.strip() in ["", "[deleted]", "[removed]"]:
+        return 0.0
+    return analyzer.polarity_scores(text)["compound"]
 
 def calculate_daily_sentiment(spark, input_path, output_path, content_type):
     """Calculate daily average sentiment per subreddit"""
-    logger.info(f"Calculating daily sentiment for {content_type} from {input_path}")
-    
+    print("[DEGUG]", "calculate_daily_sentiment entry...", "input_path:", input_path)
+
     # Read parquet files
-    df = spark.read.parquet(input_path)
-    
+    # df = spark.read.parquet(input_path) ## CHANGE [SHIVAM]
+    df = spark.read.json(input_path) ## Using for testing with JSON files
+
     # Select text column based on content type
     if content_type == "submissions":
         text_col = "selftext"
@@ -78,13 +70,15 @@ def calculate_daily_sentiment(spark, input_path, output_path, content_type):
     df = df.withColumn(
         "date", 
         date_format(
-            from_unixtime(unix_timestamp(col("created_utc"))),
+            from_unixtime(col("created_utc")),
             "yyyy-MM-dd"
         )
     )
     
     # Calculate sentiment scores
-    df = df.withColumn("sentiment_score", analyze_sentiment(col("text_content")))
+    get_compound_sentiment_udf = udf(get_compound_sentiment, FloatType())
+    df = df.withColumn("sentiment_score", get_compound_sentiment_udf(col("text_content")))
+    print("[DEGUG]", "df:", df.select("sentiment_score").show(5, truncate=False))
     
     # Group by subreddit and date, calculate average sentiment
     daily_sentiment = df.groupBy("subreddit", "date").agg(
@@ -94,9 +88,11 @@ def calculate_daily_sentiment(spark, input_path, output_path, content_type):
     
     # Filter out days with too few posts for statistical significance
     daily_sentiment = daily_sentiment.filter(col("post_count") >= 5)
+
+    print(daily_sentiment.show(100, truncate=False))
     
     # Write results
-    logger.info(f"Writing daily sentiment results to {output_path}")
+    print(f"[DEBUG] Writing daily sentiment results to {output_path}")
     daily_sentiment.write.mode("overwrite").parquet(output_path)
     
     return daily_sentiment
@@ -104,6 +100,7 @@ def calculate_daily_sentiment(spark, input_path, output_path, content_type):
 def upload_to_s3(spark, data_df, s3_bucket, s3_key):
     """Upload processed sentiment data to S3"""
     # Configure S3 client
+    print("[DEGUG]", "Entering upload_to_s3")
     s3_client = boto3.client(
         "s3",
         endpoint_url=os.environ.get("S3_ENDPOINT", "http://minio:9000"),
@@ -136,6 +133,49 @@ def upload_to_s3(spark, data_df, s3_bucket, s3_key):
             Key=s3_key_path,
             Body=json_data
         )
+    
+def indepth_sentiment_analysis(spark, input_path):
+    sentiment_schema = StructType([
+        StructField("neg", FloatType(), True),
+        StructField("neu", FloatType(), True),
+        StructField("pos", FloatType(), True),
+        StructField("compound", FloatType(), True)
+    ])
+
+    df_full = spark.read.json(input_path)
+    df = df_full.select("title")
+    print(df.show(5, truncate=False))
+
+    sentiment_udf = udf(get_sentiment, sentiment_schema)
+    df_with_sentiment = df.withColumn("sentiment", sentiment_udf(df["title"]))
+    print(df_with_sentiment.show(50, truncate=False))
+
+    df_final = df_with_sentiment.select(
+        "title",
+        "sentiment.neg",
+        "sentiment.neu",
+        "sentiment.pos",
+        "sentiment.compound"
+    )
+
+    print(df_final.show(5, truncate=False))
+    categorize_udf = udf(categorize_sentiment, StringType())
+    df_final = df_final.withColumn("sentiment_label", categorize_udf(df_final["compound"]))
+    print(df_final.show(50, truncate=False))
+    tokenizer = Tokenizer(inputCol="title", outputCol="tokens_raw")
+    df_tokens = tokenizer.transform(df_final)
+
+    remover = StopWordsRemover(inputCol="tokens_raw", outputCol="tokens_clean")
+    df_tokens = remover.transform(df_tokens)
+
+    df_words = df_tokens.withColumn("word", explode(col("tokens_clean")))
+    df_words = df_words.withColumn("word", lower(col("word")))
+
+    word_sentiment_df = df_words.groupBy("word", "sentiment_label") \
+        .agg(count("*").alias("count")) \
+        .orderBy("count", ascending=False)
+
+    print(word_sentiment_df.show(30, truncate=False))
 
 def main():
     parser = argparse.ArgumentParser(description="Calculate daily sentiment from Reddit data")
@@ -152,7 +192,7 @@ def main():
     parser.add_argument(
         "--content-type",
         choices=["submissions", "comments", "all"],
-        default="all",
+        default="submissions",
         help="Content type to process (default: all)",
     )
     parser.add_argument(
@@ -172,12 +212,20 @@ def main():
     )
     
     args = parser.parse_args()
-    
+	
+    print("[DEGUG]", "args:", args)
+    print("[DEGUG]", "args.input_dir:", args.input_dir)
+    print("[DEGUG]", "args.output_dir:", args.output_dir)
+    print("[DEGUG]", "args.content_type:", args.content_type)
+    print("[DEGUG]", "args.upload_to_s3:", args.upload_to_s3)
+    print("[DEGUG]", "args.s3_bucket:", args.s3_bucket)
+    print("[DEGUG]", "args.s3_key_prefix:", args.s3_key_prefix)
+
     # Create Spark session
     spark = SparkSession.builder \
         .appName("Reddit Sentiment Analysis") \
-        .config("spark.driver.memory", "4g") \
-        .config("spark.executor.memory", "4g") \
+        .config("spark.driver.memory", "1g") \
+        .config("spark.executor.memory", "1g") \
         .getOrCreate()
     
     # Create output directories

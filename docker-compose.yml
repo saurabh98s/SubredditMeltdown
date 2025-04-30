@@ -48,6 +48,8 @@ services:
       - ./data:/data
 
   spark-worker:
+    build:
+      dockerfile: dockerfile.spark-worker
     image: bitnami/spark:3.3.1
     container_name: spark-worker
     environment:

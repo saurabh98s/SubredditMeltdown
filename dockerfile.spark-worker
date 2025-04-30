@@ -1,0 +1,4 @@
+FROM bitnami/spark:3.3.1
+
+# Install VADER + other useful packages into Spark's Python env
+RUN /opt/bitnami/python/bin/pip install vaderSentiment numpy pandas boto3
