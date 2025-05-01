@@ -1,150 +1,137 @@
 #!/usr/bin/env python3
-import os
+"""
+Photon Arctic-Shift downloader
+• Subreddit : r/askwomen
+• Months    : 2019-10, 2019-11, 2020-10, 2020-11
+• Output    : F:\askwomen\<month>\r_askwomen_{posts|comments}.jsonl
+• Safe to rerun: existing non-empty files are skipped.
+"""
+
+import datetime as dt, json, time
+from pathlib import Path
 import requests
-import argparse
-import logging
-from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-logger = logging.getLogger(__name__)
+BASE = "https://arctic-shift.photon-reddit.com/api"
+ENDPOINTS = {"posts": "posts/search", "comments": "comments/search"}
 
-SUBMISSION_URL_TEMPLATE = "https://files.pushshift.io/reddit/submissions/RS_{year}-{month:02d}.zst"
-COMMENT_URL_TEMPLATE = "https://files.pushshift.io/reddit/comments/RC_{year}-{month:02d}.zst"
+SUBREDDIT = "movies"
+RANGES = [
+    ("2019-10-01", "2019-10-31", "2019_october"),
+    ("2019-11-01", "2019-11-30", "2019_november"),
+    ("2020-10-01", "2020-10-31", "2020_october"),
+    ("2020-11-01", "2020-11-30", "2020_november"),
+]
 
-def download_file(url, output_dir):
-    """
-    Download a file from the given URL and save it to the output directory.
-    Returns a tuple of (success, filename, error_message)
-    """
-    filename = os.path.basename(url)
-    output_path = os.path.join(output_dir, filename)
-    
-    # Skip if file already exists
-    if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-        logger.info(f"File {filename} already exists, skipping download")
-        return True, filename, None
-    
-    try:
-        logger.info(f"Downloading {url} to {output_path}")
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
-        
-        with open(output_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        
-        logger.info(f"Successfully downloaded {filename}")
-        return True, filename, None
-    
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Failed to download {url}: {str(e)}")
-        return False, filename, str(e)
+# ───────── helpers ────────────────────────────────────────────────────────────
+iso_to_ms = lambda d: int(dt.datetime.strptime(d, "%Y-%m-%d")
+                          .replace(tzinfo=dt.timezone.utc).timestamp()*1000)
 
-def download_monthly_data(year, month, output_dir, content_types=None):
-    """
-    Download Reddit data for a specific year and month.
-    content_types can be 'submissions', 'comments', or both.
-    """
-    if content_types is None:
-        content_types = ['submissions', 'comments']
-    
-    files_to_download = []
-    
-    if 'submissions' in content_types:
-        submission_url = SUBMISSION_URL_TEMPLATE.format(year=year, month=month)
-        files_to_download.append(submission_url)
-    
-    if 'comments' in content_types:
-        comment_url = COMMENT_URL_TEMPLATE.format(year=year, month=month)
-        files_to_download.append(comment_url)
-    
-    results = []
-    for url in files_to_download:
-        success, filename, error = download_file(url, output_dir)
-        results.append((success, filename, error))
-    
-    return results
+def build_session() -> requests.Session:
+    s = requests.Session()
+    s.mount("https://", HTTPAdapter(
+        max_retries=Retry(total=5, backoff_factor=1.5,
+                          status_forcelist=(429, 500, 502, 503, 504),
+                          allowed_methods=frozenset(["GET"]))
+    ))
+    s.headers.update({
+        "accept": "*/*",
+        "user-agent": "photon-scraper/1.3",
+        "referer": "https://arctic-shift.photon-reddit.com/download-tool",
+    })
+    return s
 
-def download_data_range(start_date, end_date, output_dir, content_types=None, max_workers=4):
-    """
-    Download Reddit data for a range of dates.
-    Dates should be in format 'YYYY-MM'.
-    """
-    start_year, start_month = map(int, start_date.split('-'))
-    end_year, end_month = map(int, end_date.split('-'))
-    
-    start_date = datetime(start_year, start_month, 1)
-    end_date = datetime(end_year, end_month, 1)
-    
-    current_date = start_date
-    tasks = []
-    
-    while current_date <= end_date:
-        year = current_date.year
-        month = current_date.month
-        tasks.append((year, month))
-        current_date += relativedelta(months=1)
-    
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [
-            executor.submit(download_monthly_data, year, month, output_dir, content_types)
-            for year, month in tasks
-        ]
-        
-        for future in futures:
-            future.result()
+def load(resp):
+    try:               body = resp.json()
+    except ValueError: body = resp.text.splitlines()
+    if isinstance(body, dict) and "data" in body: body = body["data"]
+    if isinstance(body, dict):                     body = [body]
+    if isinstance(body, list) and body and isinstance(body[0], str):
+        body = [json.loads(l) for l in body if l.strip()]
+    return body
 
+# ───────── fetch with 422-bisect ──────────────────────────────────────────────
+def fetch(sess, sub, a_ms, b_ms, kind, fp,
+          page_comments=100,               # page size
+          min_slice_ms=3_600_000):         # stop splitting below 1 h
+    """
+    Fetch [a_ms, b_ms) for `kind`.
+    • comments → limit=page_comments
+    • posts    → limit="auto"
+    On 400/422 keep halving the slice (down to 1 h) before giving up.
+    """
+    url   = f"{BASE}/{ENDPOINTS[kind]}"
+    total = 0
+    stack = [(a_ms, b_ms)]                # LIFO stack of slices
+
+    while stack:
+        start_ms, end_ms = stack.pop()
+
+        # --- streaming loop inside this slice -----------------------------
+        after = start_ms
+        while after < end_ms:
+            params = {
+                "subreddit": sub,
+                "after": after,
+                "before": end_ms,
+                "limit": page_comments if kind == "comments" else "auto",
+                "sort":  "asc",
+                "meta-app": "download-tool",
+            }
+            try:
+                r = sess.get(url, params=params, timeout=30)
+                r.raise_for_status()
+            except requests.HTTPError as e:
+                if (r.status_code in (400, 422) and
+                        end_ms - start_ms > min_slice_ms):
+                    # Too big → split slice in half and retry later
+                    mid = start_ms + (end_ms - start_ms) // 2
+                    stack.extend([(mid, end_ms), (start_ms, mid)])
+                    break  # abandon current inner loop; process splits
+                raise e
+
+            batch = load(r)
+            if not batch:
+                break  # this slice finished
+
+            for obj in batch:
+                fp.write(json.dumps(obj) + "\n")
+            fp.flush()
+            total += len(batch)
+
+            last_sec = max(int(o["created_utc"]) for o in batch)
+            after    = (last_sec + 1) * 1000       # advance cursor
+            time.sleep(0.25)
+    return total
+
+# ───────── main loop ──────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Download Reddit data from Arctic Shift")
-    parser.add_argument(
-        "--start-date",
-        default="2008-01",
-        help="Start date in format YYYY-MM (default: 2008-01)",
-    )
-    parser.add_argument(
-        "--end-date",
-        default=datetime.now().strftime("%Y-%m"),
-        help=f"End date in format YYYY-MM (default: current month)",
-    )
-    parser.add_argument(
-        "--output-dir",
-        default="../data/raw",
-        help="Directory to save downloaded files (default: ../data/raw)",
-    )
-    parser.add_argument(
-        "--content-types",
-        nargs="+",
-        choices=["submissions", "comments"],
-        default=["submissions", "comments"],
-        help="Content types to download (default: both submissions and comments)",
-    )
-    parser.add_argument(
-        "--max-workers",
-        type=int,
-        default=4,
-        help="Maximum number of concurrent downloads (default: 4)",
-    )
-    
-    args = parser.parse_args()
-    
-    # Create output directory if it doesn't exist
-    os.makedirs(args.output_dir, exist_ok=True)
-    
-    logger.info(f"Downloading Reddit data from {args.start_date} to {args.end_date}")
-    download_data_range(
-        args.start_date,
-        args.end_date,
-        args.output_dir,
-        args.content_types,
-        args.max_workers,
-    )
-    logger.info("Download complete!")
+    base = Path("F:/") / SUBREDDIT
+    base.mkdir(parents=True, exist_ok=True)
+    sess = build_session()
+
+    for s_iso, e_iso, tag in RANGES:
+        s_ms = iso_to_ms(s_iso)
+        e_ms = iso_to_ms(e_iso) + 86_400_000
+        month = base / tag
+        month.mkdir(parents=True, exist_ok=True)
+
+        for kind in ("posts", "comments"):
+            path = month / f"r_{SUBREDDIT}_{kind}.jsonl"
+            if path.exists() and path.stat().st_size:
+                print(f"[✓] {path.name} exists – skipping")
+                continue
+
+            print(f"[→] {tag}: {kind} → {path.name}")
+            with path.open("w", encoding="utf-8") as fp:
+                n = fetch(sess, SUBREDDIT, s_ms, e_ms, kind, fp)
+            print(f"[✓] {n:,} lines written")
+
+    print("Done ✔")
 
 if __name__ == "__main__":
-    main() 
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted")
