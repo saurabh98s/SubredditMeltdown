@@ -10,6 +10,7 @@ nltk==3.8.1
 keybert==0.7.0
 sentence-transformers==2.2.2
 langdetect==1.0.9
+textblob==0.17.1
 
 # Web API
 fastapi==0.95.0
