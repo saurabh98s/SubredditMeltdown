@@ -1,0 +1,1678 @@
+{
+  "analytics": {
+    "total_files": 94,
+    "total_size": 379786,
+    "subreddits": {
+      ".marker": {
+        "files": 3,
+        "size": 0,
+        "rows": 0
+      },
+      "antiwork": {
+        "files": 2,
+        "size": 3040,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/antiwork/part-00000-da7aab25-2145-4dfd-95f1-c62c2716cd90-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 23
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3040,
+            "last_modified": "2025-05-02T08:31:35+00:00"
+          }
+        ]
+      },
+      "coronavirus": {
+        "files": 2,
+        "size": 1654,
+        "rows": 18,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/coronavirus/part-00000-f2c398b3-7d66-468e-9abb-2693fc105df6-c000.snappy.parquet",
+            "metadata_rows": 18,
+            "actual_rows": 18,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "18",
+                "null_count": "0",
+                "unique_count": 18
+              },
+              "avg_sentiment": {
+                "non_null_count": "18",
+                "null_count": "0",
+                "unique_count": 18
+              },
+              "post_count": {
+                "non_null_count": "18",
+                "null_count": "0",
+                "unique_count": 6
+              },
+              "subreddit": {
+                "non_null_count": "18",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 1654,
+            "last_modified": "2025-05-02T08:33:17+00:00"
+          }
+        ]
+      },
+      "decidingtobebetter": {
+        "files": 2,
+        "size": 3146,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/decidingtobebetter/part-00000-73964896-61d6-4dd1-98e6-41d91c970b3b-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 28
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3146,
+            "last_modified": "2025-05-02T08:38:42+00:00"
+          }
+        ]
+      },
+      "feminism": {
+        "files": 2,
+        "size": 2729,
+        "rows": 113,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/feminism/part-00000-c2ae0510-bbdb-4e47-a12c-1e2399ed67a2-c000.snappy.parquet",
+            "metadata_rows": 113,
+            "actual_rows": 113,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "113",
+                "null_count": "0",
+                "unique_count": 113
+              },
+              "avg_sentiment": {
+                "non_null_count": "113",
+                "null_count": "0",
+                "unique_count": 112
+              },
+              "post_count": {
+                "non_null_count": "113",
+                "null_count": "0",
+                "unique_count": 7
+              },
+              "subreddit": {
+                "non_null_count": "113",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 2729,
+            "last_modified": "2025-05-02T08:40:44+00:00"
+          }
+        ]
+      },
+      "fitness": {
+        "files": 2,
+        "size": 2597,
+        "rows": 94,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/fitness/part-00000-d224b000-9df4-48d5-b64e-359d6c68631e-c000.snappy.parquet",
+            "metadata_rows": 94,
+            "actual_rows": 94,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "94",
+                "null_count": "0",
+                "unique_count": 94
+              },
+              "avg_sentiment": {
+                "non_null_count": "94",
+                "null_count": "0",
+                "unique_count": 89
+              },
+              "post_count": {
+                "non_null_count": "94",
+                "null_count": "0",
+                "unique_count": 20
+              },
+              "subreddit": {
+                "non_null_count": "94",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 2597,
+            "last_modified": "2025-05-02T08:43:00+00:00"
+          }
+        ]
+      },
+      "meditation": {
+        "files": 2,
+        "size": 3122,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/meditation/part-00000-cf1f8dac-c3df-4f1c-90a0-0eea8fda8cd6-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 36
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3122,
+            "last_modified": "2025-05-02T08:48:11+00:00"
+          }
+        ]
+      },
+      "personalfinance": {
+        "files": 2,
+        "size": 3384,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/personalfinance/part-00000-d2184aad-cdbd-4cde-87b4-e18d7e3ae884-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 85
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3384,
+            "last_modified": "2025-05-02T09:06:22+00:00"
+          }
+        ]
+      },
+      "productivity": {
+        "files": 2,
+        "size": 3029,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/productivity/part-00000-88a1b9d8-3cfa-4e8a-b03c-c8067332c37b-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 21
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3029,
+            "last_modified": "2025-05-02T09:09:10+00:00"
+          }
+        ]
+      },
+      "selfimprovement": {
+        "files": 2,
+        "size": 3138,
+        "rows": 118,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/selfimprovement/part-00000-4dc3c938-07f9-40f0-82ef-5d7032e76b51-c000.snappy.parquet",
+            "metadata_rows": 118,
+            "actual_rows": 118,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "avg_sentiment": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 118
+              },
+              "post_count": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 29
+              },
+              "subreddit": {
+                "non_null_count": "118",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 3138,
+            "last_modified": "2025-05-02T09:15:14+00:00"
+          }
+        ]
+      },
+      "sports": {
+        "files": 2,
+        "size": 1306,
+        "rows": 1,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/sports/part-00000-b51b848a-5465-488a-b7c6-08a49a3e6a28-c000.snappy.parquet",
+            "metadata_rows": 1,
+            "actual_rows": 1,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "1",
+                "null_count": "0",
+                "unique_count": 1
+              },
+              "avg_sentiment": {
+                "non_null_count": "1",
+                "null_count": "0",
+                "unique_count": 1
+              },
+              "post_count": {
+                "non_null_count": "1",
+                "null_count": "0",
+                "unique_count": 1
+              },
+              "subreddit": {
+                "non_null_count": "1",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 1306,
+            "last_modified": "2025-05-02T09:16:49+00:00"
+          }
+        ]
+      },
+      "worldnews": {
+        "files": 2,
+        "size": 1411,
+        "rows": 3,
+        "parquet_stats": [
+          {
+            "file": "analytics/submissions_sentiment/worldnews/part-00000-1a8bfe00-d7d2-4253-a872-143a24944d53-c000.snappy.parquet",
+            "metadata_rows": 3,
+            "actual_rows": 3,
+            "columns": [
+              "date",
+              "avg_sentiment",
+              "post_count",
+              "subreddit"
+            ],
+            "column_stats": {
+              "date": {
+                "non_null_count": "3",
+                "null_count": "0",
+                "unique_count": 3
+              },
+              "avg_sentiment": {
+                "non_null_count": "3",
+                "null_count": "0",
+                "unique_count": 3
+              },
+              "post_count": {
+                "non_null_count": "3",
+                "null_count": "0",
+                "unique_count": 1
+              },
+              "subreddit": {
+                "non_null_count": "3",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 1411,
+            "last_modified": "2025-05-02T09:18:56+00:00"
+          }
+        ]
+      },
+      "negative_words_antiwork": {
+        "files": 3,
+        "size": 35448,
+        "rows": 2000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_antiwork/part-00000-b6671a26-469e-47fc-bee6-0f8535167e5d-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 209
+              }
+            },
+            "file_size": 17131,
+            "last_modified": "2025-05-02T08:30:29+00:00"
+          },
+          {
+            "file": "analytics/word_analysis/negative_words_antiwork/part-00000-c25585c0-5ed2-4ec3-84eb-8afb683c17dc-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 999
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 299
+              }
+            },
+            "file_size": 18317,
+            "last_modified": "2025-05-02T10:35:57+00:00"
+          }
+        ]
+      },
+      "negative_words_coronavirus": {
+        "files": 2,
+        "size": 481,
+        "rows": 0,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_coronavirus/part-00000-7f7aa12f-db68-48ca-9ceb-7b1ff0e37266-c000.snappy.parquet",
+            "metadata_rows": 0,
+            "actual_rows": 0,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "avg_sentiment": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "count": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              }
+            },
+            "file_size": 481,
+            "last_modified": "2025-05-02T08:32:43+00:00"
+          }
+        ]
+      },
+      "negative_words_decidingtobebetter": {
+        "files": 2,
+        "size": 12011,
+        "rows": 690,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_decidingtobebetter/part-00000-5505a6be-a6d6-49ba-9324-56b4667be406-c000.snappy.parquet",
+            "metadata_rows": 690,
+            "actual_rows": 690,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "690",
+                "null_count": "0",
+                "unique_count": 690
+              },
+              "avg_sentiment": {
+                "non_null_count": "690",
+                "null_count": "0",
+                "unique_count": 688
+              },
+              "count": {
+                "non_null_count": "690",
+                "null_count": "0",
+                "unique_count": 68
+              }
+            },
+            "file_size": 12011,
+            "last_modified": "2025-05-02T08:36:55+00:00"
+          }
+        ]
+      },
+      "negative_words_feminism": {
+        "files": 2,
+        "size": 4021,
+        "rows": 185,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_feminism/part-00000-5af060ea-c9e0-416b-98c2-719ad85a7694-c000.snappy.parquet",
+            "metadata_rows": 185,
+            "actual_rows": 185,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "185",
+                "null_count": "0",
+                "unique_count": 185
+              },
+              "avg_sentiment": {
+                "non_null_count": "185",
+                "null_count": "0",
+                "unique_count": 182
+              },
+              "count": {
+                "non_null_count": "185",
+                "null_count": "0",
+                "unique_count": 32
+              }
+            },
+            "file_size": 4021,
+            "last_modified": "2025-05-02T08:40:04+00:00"
+          }
+        ]
+      },
+      "negative_words_fitness": {
+        "files": 2,
+        "size": 1892,
+        "rows": 51,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_fitness/part-00000-b4b6450d-7145-4772-84bf-7c22d25528be-c000.snappy.parquet",
+            "metadata_rows": 51,
+            "actual_rows": 51,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "51",
+                "null_count": "0",
+                "unique_count": 51
+              },
+              "avg_sentiment": {
+                "non_null_count": "51",
+                "null_count": "0",
+                "unique_count": 51
+              },
+              "count": {
+                "non_null_count": "51",
+                "null_count": "0",
+                "unique_count": 13
+              }
+            },
+            "file_size": 1892,
+            "last_modified": "2025-05-02T08:42:16+00:00"
+          }
+        ]
+      },
+      "negative_words_meditation": {
+        "files": 2,
+        "size": 5660,
+        "rows": 283,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_meditation/part-00000-7a417be9-4919-4e0b-bfc7-5b77a5c97328-c000.snappy.parquet",
+            "metadata_rows": 283,
+            "actual_rows": 283,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "283",
+                "null_count": "0",
+                "unique_count": 283
+              },
+              "avg_sentiment": {
+                "non_null_count": "283",
+                "null_count": "0",
+                "unique_count": 283
+              },
+              "count": {
+                "non_null_count": "283",
+                "null_count": "0",
+                "unique_count": 40
+              }
+            },
+            "file_size": 5660,
+            "last_modified": "2025-05-02T08:46:26+00:00"
+          }
+        ]
+      },
+      "negative_words_personalfinance": {
+        "files": 2,
+        "size": 12677,
+        "rows": 720,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_personalfinance/part-00000-04c45d75-cf50-41fe-8496-7c308a093a63-c000.snappy.parquet",
+            "metadata_rows": 720,
+            "actual_rows": 720,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "720",
+                "null_count": "0",
+                "unique_count": 720
+              },
+              "avg_sentiment": {
+                "non_null_count": "720",
+                "null_count": "0",
+                "unique_count": 719
+              },
+              "count": {
+                "non_null_count": "720",
+                "null_count": "0",
+                "unique_count": 83
+              }
+            },
+            "file_size": 12677,
+            "last_modified": "2025-05-02T08:59:50+00:00"
+          }
+        ]
+      },
+      "negative_words_productivity": {
+        "files": 2,
+        "size": 1778,
+        "rows": 41,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_productivity/part-00000-b794402c-3c21-4cd4-935b-5782c60fd52d-c000.snappy.parquet",
+            "metadata_rows": 41,
+            "actual_rows": 41,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "41",
+                "null_count": "0",
+                "unique_count": 41
+              },
+              "avg_sentiment": {
+                "non_null_count": "41",
+                "null_count": "0",
+                "unique_count": 41
+              },
+              "count": {
+                "non_null_count": "41",
+                "null_count": "0",
+                "unique_count": 14
+              }
+            },
+            "file_size": 1778,
+            "last_modified": "2025-05-02T09:08:05+00:00"
+          }
+        ]
+      },
+      "negative_words_selfimprovement": {
+        "files": 2,
+        "size": 13183,
+        "rows": 744,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_selfimprovement/part-00000-4cac2134-eedc-4dfa-8dd8-48597a95655f-c000.snappy.parquet",
+            "metadata_rows": 744,
+            "actual_rows": 744,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "744",
+                "null_count": "0",
+                "unique_count": 744
+              },
+              "avg_sentiment": {
+                "non_null_count": "744",
+                "null_count": "0",
+                "unique_count": 744
+              },
+              "count": {
+                "non_null_count": "744",
+                "null_count": "0",
+                "unique_count": 74
+              }
+            },
+            "file_size": 13183,
+            "last_modified": "2025-05-02T09:13:00+00:00"
+          }
+        ]
+      },
+      "negative_words_sports": {
+        "files": 2,
+        "size": 481,
+        "rows": 0,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_sports/part-00000-588afb13-bce1-4a44-bf14-e82c422f318f-c000.snappy.parquet",
+            "metadata_rows": 0,
+            "actual_rows": 0,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "avg_sentiment": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "count": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              }
+            },
+            "file_size": 481,
+            "last_modified": "2025-05-02T09:16:18+00:00"
+          }
+        ]
+      },
+      "negative_words_worldnews": {
+        "files": 2,
+        "size": 481,
+        "rows": 0,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/negative_words_worldnews/part-00000-24c094e9-26e9-47c3-bf83-4d04c118db84-c000.snappy.parquet",
+            "metadata_rows": 0,
+            "actual_rows": 0,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "avg_sentiment": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "count": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              }
+            },
+            "file_size": 481,
+            "last_modified": "2025-05-02T09:18:24+00:00"
+          }
+        ]
+      },
+      "positive_words_antiwork": {
+        "files": 3,
+        "size": 36086,
+        "rows": 2000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_antiwork/part-00000-5a60e196-a4de-4850-b4e8-16811fbc53b4-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 173
+              }
+            },
+            "file_size": 16490,
+            "last_modified": "2025-05-02T08:29:59+00:00"
+          },
+          {
+            "file": "analytics/word_analysis/positive_words_antiwork/part-00000-7a662bb0-c2ba-421d-8e00-b0737bf4d6aa-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 674
+              }
+            },
+            "file_size": 19596,
+            "last_modified": "2025-05-02T10:35:27+00:00"
+          }
+        ]
+      },
+      "positive_words_coronavirus": {
+        "files": 2,
+        "size": 1734,
+        "rows": 39,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_coronavirus/part-00000-86b4bfe1-c077-4b04-9346-3b090cbba9e2-c000.snappy.parquet",
+            "metadata_rows": 39,
+            "actual_rows": 39,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "39",
+                "null_count": "0",
+                "unique_count": 39
+              },
+              "avg_sentiment": {
+                "non_null_count": "39",
+                "null_count": "0",
+                "unique_count": 34
+              },
+              "count": {
+                "non_null_count": "39",
+                "null_count": "0",
+                "unique_count": 12
+              }
+            },
+            "file_size": 1734,
+            "last_modified": "2025-05-02T08:32:13+00:00"
+          }
+        ]
+      },
+      "positive_words_decidingtobebetter": {
+        "files": 2,
+        "size": 17918,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_decidingtobebetter/part-00000-92d5e26e-5027-4447-baef-29fb9357a648-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 359
+              }
+            },
+            "file_size": 17918,
+            "last_modified": "2025-05-02T08:36:25+00:00"
+          }
+        ]
+      },
+      "positive_words_feminism": {
+        "files": 2,
+        "size": 11828,
+        "rows": 728,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_feminism/part-00000-5607fdfe-5325-49d7-ac7d-5aff064cf1c4-c000.snappy.parquet",
+            "metadata_rows": 728,
+            "actual_rows": 728,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "728",
+                "null_count": "0",
+                "unique_count": 728
+              },
+              "avg_sentiment": {
+                "non_null_count": "728",
+                "null_count": "0",
+                "unique_count": 721
+              },
+              "count": {
+                "non_null_count": "728",
+                "null_count": "0",
+                "unique_count": 95
+              }
+            },
+            "file_size": 11828,
+            "last_modified": "2025-05-02T08:39:34+00:00"
+          }
+        ]
+      },
+      "positive_words_fitness": {
+        "files": 2,
+        "size": 16109,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_fitness/part-00000-3ce4ed88-f921-4f66-9937-e77276f05451-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 971
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 143
+              }
+            },
+            "file_size": 16109,
+            "last_modified": "2025-05-02T08:41:46+00:00"
+          }
+        ]
+      },
+      "positive_words_meditation": {
+        "files": 2,
+        "size": 17871,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_meditation/part-00000-3997bbcc-a0f9-48f0-9b17-39896d5444b1-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 340
+              }
+            },
+            "file_size": 17871,
+            "last_modified": "2025-05-02T08:45:56+00:00"
+          }
+        ]
+      },
+      "positive_words_personalfinance": {
+        "files": 2,
+        "size": 19921,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_personalfinance/part-00000-1e6a43cd-0ab5-48af-a165-8739baab0f5e-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 746
+              }
+            },
+            "file_size": 19921,
+            "last_modified": "2025-05-02T08:59:19+00:00"
+          }
+        ]
+      },
+      "positive_words_productivity": {
+        "files": 2,
+        "size": 17231,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_productivity/part-00000-7079728e-dadd-423e-9770-4dda3fffb2b5-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 245
+              }
+            },
+            "file_size": 17231,
+            "last_modified": "2025-05-02T09:07:35+00:00"
+          }
+        ]
+      },
+      "positive_words_selfimprovement": {
+        "files": 2,
+        "size": 18330,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_selfimprovement/part-00000-05ea88d5-8c1a-4025-a652-2574d144b2c8-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "avg_sentiment": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 414
+              }
+            },
+            "file_size": 18330,
+            "last_modified": "2025-05-02T09:12:30+00:00"
+          }
+        ]
+      },
+      "positive_words_sports": {
+        "files": 2,
+        "size": 481,
+        "rows": 0,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_sports/part-00000-89b84654-81a7-4769-9047-d29434799f3d-c000.snappy.parquet",
+            "metadata_rows": 0,
+            "actual_rows": 0,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "avg_sentiment": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              },
+              "count": {
+                "non_null_count": "0",
+                "null_count": "0",
+                "unique_count": 0
+              }
+            },
+            "file_size": 481,
+            "last_modified": "2025-05-02T09:15:48+00:00"
+          }
+        ]
+      },
+      "positive_words_worldnews": {
+        "files": 2,
+        "size": 1142,
+        "rows": 7,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/positive_words_worldnews/part-00000-481af4a4-f78d-4703-b0c8-854154cf4a59-c000.snappy.parquet",
+            "metadata_rows": 7,
+            "actual_rows": 7,
+            "columns": [
+              "word",
+              "avg_sentiment",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "7",
+                "null_count": "0",
+                "unique_count": 7
+              },
+              "avg_sentiment": {
+                "non_null_count": "7",
+                "null_count": "0",
+                "unique_count": 2
+              },
+              "count": {
+                "non_null_count": "7",
+                "null_count": "0",
+                "unique_count": 7
+              }
+            },
+            "file_size": 1142,
+            "last_modified": "2025-05-02T09:17:54+00:00"
+          }
+        ]
+      },
+      "word_counts_antiwork": {
+        "files": 3,
+        "size": 20393,
+        "rows": 2000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_antiwork/part-00000-7a11ddc9-1a2e-4785-bb39-ee682ef71b90-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 260
+              }
+            },
+            "file_size": 9063,
+            "last_modified": "2025-05-02T08:29:59+00:00"
+          },
+          {
+            "file": "analytics/word_analysis/word_counts_antiwork/part-00000-a42b8a7e-a661-4c16-bbd8-fc150472b752-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 674
+              }
+            },
+            "file_size": 11330,
+            "last_modified": "2025-05-02T10:35:27+00:00"
+          }
+        ]
+      },
+      "word_counts_coronavirus": {
+        "files": 2,
+        "size": 11317,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_coronavirus/part-00000-ed71222a-a74e-4ba0-be86-71694448e10e-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 17
+              }
+            },
+            "file_size": 11317,
+            "last_modified": "2025-05-02T08:31:43+00:00"
+          }
+        ]
+      },
+      "word_counts_decidingtobebetter": {
+        "files": 2,
+        "size": 9648,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_decidingtobebetter/part-00000-c86e8675-a6d0-466b-91de-203001297627-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 360
+              }
+            },
+            "file_size": 9648,
+            "last_modified": "2025-05-02T08:36:25+00:00"
+          }
+        ]
+      },
+      "word_counts_feminism": {
+        "files": 2,
+        "size": 8274,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_feminism/part-00000-37727ba0-dcc8-4e33-92f3-c2bbff834084-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 98
+              }
+            },
+            "file_size": 8274,
+            "last_modified": "2025-05-02T08:39:04+00:00"
+          }
+        ]
+      },
+      "word_counts_fitness": {
+        "files": 2,
+        "size": 8474,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_fitness/part-00000-c9d1ebf1-6e12-4e2e-bd7f-d5c6d4c6aaf0-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 143
+              }
+            },
+            "file_size": 8474,
+            "last_modified": "2025-05-02T08:41:46+00:00"
+          }
+        ]
+      },
+      "word_counts_meditation": {
+        "files": 2,
+        "size": 9602,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_meditation/part-00000-83a85668-d99a-40ff-a3d8-3ceb026f023c-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 341
+              }
+            },
+            "file_size": 9602,
+            "last_modified": "2025-05-02T08:45:56+00:00"
+          }
+        ]
+      },
+      "word_counts_personalfinance": {
+        "files": 2,
+        "size": 11618,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_personalfinance/part-00000-8560eade-493a-49d2-a61f-d4bc443a0de0-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 744
+              }
+            },
+            "file_size": 11618,
+            "last_modified": "2025-05-02T08:59:19+00:00"
+          }
+        ]
+      },
+      "word_counts_productivity": {
+        "files": 2,
+        "size": 8955,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_productivity/part-00000-37723a53-6904-4468-abcb-aae817900997-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 245
+              }
+            },
+            "file_size": 8955,
+            "last_modified": "2025-05-02T09:07:35+00:00"
+          }
+        ]
+      },
+      "word_counts_selfimprovement": {
+        "files": 2,
+        "size": 10049,
+        "rows": 1000,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_selfimprovement/part-00000-2e25d951-0160-4e3a-9511-9fcde149c2a5-c000.snappy.parquet",
+            "metadata_rows": 1000,
+            "actual_rows": 1000,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 1000
+              },
+              "count": {
+                "non_null_count": "1000",
+                "null_count": "0",
+                "unique_count": 414
+              }
+            },
+            "file_size": 10049,
+            "last_modified": "2025-05-02T09:12:30+00:00"
+          }
+        ]
+      },
+      "word_counts_sports": {
+        "files": 2,
+        "size": 897,
+        "rows": 15,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_sports/part-00000-89ae3151-76aa-42c8-8e3b-d72bacbd664a-c000.snappy.parquet",
+            "metadata_rows": 15,
+            "actual_rows": 15,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "15",
+                "null_count": "0",
+                "unique_count": 15
+              },
+              "count": {
+                "non_null_count": "15",
+                "null_count": "0",
+                "unique_count": 1
+              }
+            },
+            "file_size": 897,
+            "last_modified": "2025-05-02T09:15:18+00:00"
+          }
+        ]
+      },
+      "word_counts_worldnews": {
+        "files": 2,
+        "size": 5239,
+        "rows": 321,
+        "parquet_stats": [
+          {
+            "file": "analytics/word_analysis/word_counts_worldnews/part-00000-91c73851-5146-4957-90b2-b1907fa8adc7-c000.snappy.parquet",
+            "metadata_rows": 321,
+            "actual_rows": 321,
+            "columns": [
+              "word",
+              "count"
+            ],
+            "column_stats": {
+              "word": {
+                "non_null_count": "321",
+                "null_count": "0",
+                "unique_count": 321
+              },
+              "count": {
+                "non_null_count": "321",
+                "null_count": "0",
+                "unique_count": 12
+              }
+            },
+            "file_size": 5239,
+            "last_modified": "2025-05-02T09:17:24+00:00"
+          }
+        ]
+      }
+    }
+  }
+}

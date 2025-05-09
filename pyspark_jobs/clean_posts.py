@@ -201,64 +201,74 @@ def process_comments(spark, input_dir, output_path):
     result.write.mode("overwrite").parquet(output_path)
     return count
 
-def upload_to_s3(local_path, s3_bucket, s3_key):
-    """Upload processed data to S3"""
-    logger.info(f"Starting S3 upload from {local_path} to s3://{s3_bucket}/{s3_key}")
+def test_s3_connection(s3_endpoint, s3_access_key, s3_secret_key, bucket_name, required_prefixes=None):
+    """Test connection to S3 and verify/create required buckets and prefixes"""
+    logger.info(f"Testing connection to S3 at {s3_endpoint}")
+    logger.info(f"S3 Access Key: {s3_access_key}")
+    logger.info(f"S3 Secret Key present: {'Yes' if s3_secret_key else 'No'}")
+
     try:
-        # Log environment variables for debugging
-        logger.info(f"S3 Endpoint: {os.environ.get('S3_ENDPOINT', 'http://minio:9000')}")
-        logger.info(f"S3 Access Key: {os.environ.get('S3_ACCESS_KEY', 'minioadmin')}")
-        # Don't log the full secret key
-        logger.info(f"S3 Secret Key present: {'Yes' if os.environ.get('S3_SECRET_KEY') else 'No, using default'}")
-        
         # Configure S3 client
         s3_client = boto3.client(
             "s3",
-            endpoint_url=os.environ.get("S3_ENDPOINT", "http://minio:9000"),
-            aws_access_key_id=os.environ.get("S3_ACCESS_KEY", "minioadmin"),
-            aws_secret_access_key=os.environ.get("S3_SECRET_KEY", "minioadmin"),
+            endpoint_url=s3_endpoint,
+            aws_access_key_id=s3_access_key,
+            aws_secret_access_key=s3_secret_key,
             region_name="us-east-1",
         )
         
-        # Test connection
-        logger.info("Testing S3 connection by listing buckets")
+        # Test connection by listing buckets
         response = s3_client.list_buckets()
-        logger.info(f"Available buckets: {[bucket['Name'] for bucket in response['Buckets']]}")
+        buckets = [bucket['Name'] for bucket in response['Buckets']]
+        logger.info(f"Available buckets: {buckets}")
         
-        # Verify bucket exists
-        logger.info(f"Verifying bucket '{s3_bucket}' exists")
-        try:
-            s3_client.head_bucket(Bucket=s3_bucket)
-            logger.info(f"Bucket '{s3_bucket}' exists")
-        except Exception as e:
-            logger.error(f"Bucket verification error: {str(e)}")
-            logger.info(f"Attempting to create bucket '{s3_bucket}'")
-            try:
-                s3_client.create_bucket(Bucket=s3_bucket)
-                logger.info(f"Created bucket '{s3_bucket}'")
-            except Exception as create_error:
-                logger.error(f"Failed to create bucket: {str(create_error)}")
+        # Check if our bucket exists
+        bucket_exists = bucket_name in buckets
+        if not bucket_exists:
+            logger.info(f"Bucket '{bucket_name}' doesn't exist, creating it")
+            s3_client.create_bucket(Bucket=bucket_name)
+            logger.info(f"Created bucket '{bucket_name}'")
+        else:
+            logger.info(f"Bucket '{bucket_name}' already exists")
         
-        # Upload files
-        file_count = 0
+        # Create required prefixes (folders)
+        if required_prefixes:
+            for prefix in required_prefixes:
+                prefix_path = f"{prefix}/"
+                logger.info(f"Ensuring prefix '{prefix_path}' exists in bucket '{bucket_name}'")
+                s3_client.put_object(Bucket=bucket_name, Key=prefix_path)
+        
+        return True, s3_client
+    except Exception as e:
+        logger.error(f"S3 connection error: {str(e)}")
+        logger.error("Full exception:", exc_info=True)
+        return False, None
+
+def upload_folder_to_s3(s3_client, local_path, s3_bucket, s3_key):
+    """Upload a folder to S3"""
+    logger.info(f"Uploading folder {local_path} to s3://{s3_bucket}/{s3_key}")
+    file_count = 0
+    
+    try:
         for root, _, files in os.walk(local_path):
             for file in files:
-                local_file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(local_file_path, local_path)
-                s3_file_key = os.path.join(s3_key, relative_path)
-                
-                logger.info(f"Uploading {local_file_path} to s3://{s3_bucket}/{s3_file_key}")
-                try:
-                    s3_client.upload_file(local_file_path, s3_bucket, s3_file_key)
-                    file_count += 1
-                    logger.info(f"Successfully uploaded to s3://{s3_bucket}/{s3_file_key}")
-                except Exception as upload_error:
-                    logger.error(f"Failed to upload {local_file_path}: {str(upload_error)}")
+                if file.endswith('.parquet') or file.endswith('_SUCCESS'):
+                    local_file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(local_file_path, local_path)
+                    s3_file_key = os.path.join(s3_key, relative_path)
+                    
+                    logger.info(f"Uploading {local_file_path} to s3://{s3_bucket}/{s3_file_key}")
+                    try:
+                        s3_client.upload_file(local_file_path, s3_bucket, s3_file_key)
+                        file_count += 1
+                    except Exception as upload_error:
+                        logger.error(f"Failed to upload {local_file_path}: {str(upload_error)}")
         
-        logger.info(f"S3 upload completed. Uploaded {file_count} files.")
+        logger.info(f"Uploaded {file_count} files from {local_path} to s3://{s3_bucket}/{s3_key}")
+        return file_count
     except Exception as e:
-        logger.error(f"S3 upload error: {str(e)}")
-        logger.error("Full exception:", exc_info=True)
+        logger.error(f"Error uploading folder {local_path}: {str(e)}")
+        return 0
 
 def main():
     parser = argparse.ArgumentParser(description="Clean and preprocess Reddit data")
@@ -305,6 +315,23 @@ def main():
     s3_endpoint = os.environ.get("S3_ENDPOINT", "http://minio:9000")
     s3_access_key = os.environ.get("S3_ACCESS_KEY", "minioadmin")
     s3_secret_key = os.environ.get("S3_SECRET_KEY", "minioadmin")
+    
+    # Test S3 connection if uploads are requested
+    s3_client = None
+    if args.upload_to_s3:
+        logger.info("Testing S3 connection before starting data processing")
+        required_prefixes = [
+            f"{args.s3_key_prefix}/submissions",
+            f"{args.s3_key_prefix}/comments"
+        ]
+        connection_ok, s3_client = test_s3_connection(
+            s3_endpoint, s3_access_key, s3_secret_key, 
+            args.s3_bucket, required_prefixes
+        )
+        
+        if not connection_ok:
+            logger.error("Failed to connect to S3. Processing will continue but data won't be uploaded.")
+            args.upload_to_s3 = False
     
     # Create Spark session
     spark = SparkSession.builder \
@@ -355,37 +382,32 @@ def main():
             subreddit_name = os.path.basename(subreddit_dir)
             logger.info(f"Processing subreddit: {subreddit_name}")
             
+            subreddit_submissions_output = os.path.join(submissions_output, subreddit_name)
+            subreddit_comments_output = os.path.join(comments_output, subreddit_name)
+            
             # Process submissions
             if args.content_type in ["submissions", "all"]:
-                count = process_submissions(spark, subreddit_dir, 
-                                   os.path.join(submissions_output, subreddit_name))
+                count = process_submissions(spark, subreddit_dir, subreddit_submissions_output)
                 if count:
                     submissions_count += count
+                    
+                    # Upload this subreddit's submissions to S3 immediately
+                    if args.upload_to_s3 and s3_client and count > 0:
+                        s3_key = f"{args.s3_key_prefix}/submissions/{subreddit_name}"
+                        upload_folder_to_s3(s3_client, subreddit_submissions_output, args.s3_bucket, s3_key)
             
             # Process comments
             if args.content_type in ["comments", "all"]:
-                count = process_comments(spark, subreddit_dir, 
-                               os.path.join(comments_output, subreddit_name))
+                count = process_comments(spark, subreddit_dir, subreddit_comments_output)
                 if count:
                     comments_count += count
+                    
+                    # Upload this subreddit's comments to S3 immediately
+                    if args.upload_to_s3 and s3_client and count > 0:
+                        s3_key = f"{args.s3_key_prefix}/comments/{subreddit_name}"
+                        upload_folder_to_s3(s3_client, subreddit_comments_output, args.s3_bucket, s3_key)
         
         logger.info(f"Total processed: {submissions_count} submissions, {comments_count} comments")
-        
-        # Upload to S3 if requested
-        if args.upload_to_s3:
-            if args.content_type in ["submissions", "all"]:
-                upload_to_s3(
-                    submissions_output,
-                    args.s3_bucket,
-                    f"{args.s3_key_prefix}/submissions"
-                )
-            
-            if args.content_type in ["comments", "all"]:
-                upload_to_s3(
-                    comments_output,
-                    args.s3_bucket,
-                    f"{args.s3_key_prefix}/comments"
-                )
     
     finally:
         # Stop Spark session

@@ -1,0 +1,646 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: var(--scale-bg-dark);
+  color: white;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--scale-border-dark);
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.mainContent {
+  flex: 1;
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 0 1.5rem;
+}
+
+.footer {
+  background-color: var(--scale-bg-dark);
+  color: var(--scale-text-light);
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--scale-border-dark);
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--scale-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--scale-border);
+  background-color: var(--scale-bg-light);
+}
+
+.cardBody {
+  padding: 1.5rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--scale-text-primary);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -0.75rem;
+}
+
+.col4 {
+  flex: 0 0 calc(33.333% - 1.5rem);
+  margin: 0 0.75rem 1.5rem;
+  min-width: 250px;
+}
+
+.col6 {
+  flex: 0 0 calc(50% - 1.5rem);
+  margin: 0 0.75rem 1.5rem;
+  min-width: 250px;
+}
+
+.col8 {
+  flex: 0 0 calc(66.667% - 1.5rem);
+  margin: 0 0.75rem 1.5rem;
+}
+
+.col12 {
+  flex: 0 0 calc(100% - 1.5rem);
+  margin: 0 0.75rem 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--scale-text-secondary);
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--scale-border);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--scale-border);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: white;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background-color: var(--scale-accent-light);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: var(--scale-accent);
+}
+
+.primaryButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--scale-accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  text-decoration: none;
+}
+
+.primaryButton:hover {
+  background-color: var(--scale-accent-dark);
+}
+
+.callToAction {
+  text-align: center;
+  padding: 1rem;
+}
+
+.ctaTitle {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.ctaText {
+  margin-bottom: 1.5rem;
+  color: var(--scale-text-secondary);
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--scale-accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.ctaButton:hover {
+  background-color: var(--scale-accent-dark);
+}
+
+/* New styles for the enhanced homepage */
+
+.timeseriesContainer {
+  height: 400px;
+  width: 100%;
+}
+
+.placeholderMessage {
+  text-align: center;
+  color: var(--scale-text-light);
+  padding: 2rem;
+  background-color: var(--scale-bg-light);
+  border-radius: 4px;
+}
+
+/* Stats Cards */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--scale-border);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--scale-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--scale-text-primary);
+}
+
+.statDesc {
+  font-size: 0.75rem;
+  color: var(--scale-text-light);
+  margin-top: 0.5rem;
+}
+
+/* Sentiment colors */
+.positive {
+  color: var(--scale-positive);
+}
+
+.negative {
+  color: var(--scale-negative);
+}
+
+.neutral {
+  color: var(--scale-text-primary);
+}
+
+/* Events List */
+.eventsList {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.eventItem {
+  display: flex;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--scale-bg-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eventItem:hover {
+  background-color: var(--scale-bg-hover);
+}
+
+.eventDate {
+  min-width: 90px;
+  font-size: 0.85rem;
+  color: var(--scale-text-light);
+  padding-right: 1rem;
+}
+
+.eventContent {
+  flex: 1;
+}
+
+.eventText {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+}
+
+.eventMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.eventCategory {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: var(--scale-bg-dark);
+  color: var(--scale-text-light);
+}
+
+.eventPolitics {
+  background-color: #e57373;
+  color: #fff;
+}
+
+.eventEconomic {
+  background-color: #81c784;
+  color: #fff;
+}
+
+.eventPandemic {
+  background-color: #e040fb;
+  color: #fff;
+}
+
+.eventTechnology {
+  background-color: #64b5f6;
+  color: #fff;
+}
+
+.eventPlatform {
+  background-color: #9575cd;
+  color: #fff;
+}
+
+.eventGaming {
+  background-color: #4db6ac;
+  color: #fff;
+}
+
+.eventEntertainment {
+  background-color: #ffb74d;
+  color: #fff;
+}
+
+.eventSports {
+  background-color: #4fc3f7;
+  color: #fff;
+}
+
+.eventNews {
+  background-color: #f06292;
+  color: #fff;
+}
+
+.eventCommunity {
+  background-color: #7986cb;
+  color: #fff;
+}
+
+.eventImpact {
+  color: var(--scale-text-light);
+  background-color: var(--scale-bg-dark);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+}
+
+.eventGenerated {
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background-color: var(--scale-bg-dark);
+}
+
+.eventCount {
+  font-size: 0.8rem;
+  color: var(--scale-text-light);
+  display: flex;
+  align-items: center;
+}
+
+.eventCountBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--scale-accent);
+  color: white;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.selectionPanel {
+  background-color: var(--scale-bg-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.selectionControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.controlGroup {
+  flex: 1;
+  min-width: 200px;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-right: 0.5rem;
+}
+
+.checkboxLabel {
+  font-weight: 500;
+}
+
+.helpText {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--scale-text-light);
+  margin-top: 0.25rem;
+  margin-left: 1.5rem;
+}
+
+.summary {
+  background-color: var(--scale-bg-dark);
+  color: var(--scale-text-light);
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+}
+
+.summaryContent {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.summaryHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.subtitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.statsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.statsCard {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+}
+
+.statsIcon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.statsContent {
+  flex: 1;
+}
+
+.statsTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--scale-text-light);
+}
+
+.statsValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.statsSubtext {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.insightsGrid {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.col8 {
+  flex: 8;
+}
+
+.col4 {
+  flex: 4;
+}
+
+.chartContainer {
+  height: 350px;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cardLink {
+  color: var(--scale-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+}
+
+.cardFooter {
+  border-top: 1px solid var(--scale-border-light);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardFooterText {
+  font-size: 0.875rem;
+  color: var(--scale-text-light);
+}
+
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  color: var(--scale-text-light);
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--scale-border-light);
+  border-top-color: var(--scale-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.noData {
+  text-align: center;
+  padding: 2rem;
+  color: var(--scale-text-light);
+}
+
+.cardText {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--scale-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.featureList {
+  margin-top: 1.5rem;
+}
+
+.featureItem {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.featureIcon {
+  width: 2rem;
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.featureText h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.featureText p {
+  font-size: 0.85rem;
+  margin: 0;
+  color: var(--scale-text-light);
+}
+
+.dataSourceItem {
+  margin-bottom: 1.25rem;
+}
+
+.dataSourceItem h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.dataSourceItem p {
+  font-size: 0.85rem;
+  margin: 0;
+  color: var(--scale-text-light);
+} 

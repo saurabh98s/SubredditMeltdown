@@ -189,10 +189,46 @@ def analyze_word_frequency(spark, df, output_path, s3_client=None, s3_bucket=Non
     logger.info(f"Analyzing word frequency for {'subreddit '+subreddit if subreddit else 'data'}")
     
     try:
+        # Comprehensive stop words list
+        stop_words = [
+            'that', 'have', 'they', 'this', 'with', 'just', 'your', 'like', 'what', 'about', 
+            'more', 'their', 'because', "it's", 'would', "don't", 'from', 'when', 'will', 
+            'even', 'some', 'there', 'think', 'than', 'make', 'want', 'only', 'them', 'being',
+            'then', 'much', 'know', 'need', 'really', 'could', 'other', 'most', "you're",
+            'still', 'into', 'also', 'should', 'where', 'been', 'were', 'which', 'these',
+            'those', 'does', "doesn't", 'doing', 'done', 'each', 'every', 'gets', 'getting',
+            'goes', 'going', 'came', 'come', 'comes', 'coming', 'here', 'herself', 'himself',
+            'itself', 'myself', 'yourself', 'ourselves', 'themselves', 'very', 'well', 'says',
+            'said', 'saying', 'tell', 'told', 'tells', 'telling', 'while', 'years', 'days',
+            'months', 'week', 'weeks', 'month', 'year', 'hours', 'hour', 'minutes', 'minute',
+            'always', 'never', 'sometimes', 'often', 'rarely', 'seem', 'seems', 'seemed',
+            'anybody', 'everyone', 'somebody', 'nobody', 'everything', 'nothing', 'anything',
+            'somewhere', 'anywhere', 'everywhere', 'nowhere', 'whatever', 'whoever', 'whenever',
+            'however', 'whichever', 'anyone', 'someone', 'thing', 'things', 'stuff', 'ever'
+        ]
+        
+        # Create stopwords remover
+        remover = StopWordsRemover(inputCol="words", outputCol="filtered_words", stopWords=stop_words)
+        
         # Extract words from text content
-        word_frequency_df = df.select(
-            explode(split(lower(col("text_content")), "\\s+")).alias("word")
+        tokenizer = Tokenizer(inputCol="text_content", outputCol="words")
+        tokenized_df = tokenizer.transform(df)
+        
+        # Remove stop words
+        filtered_df = remover.transform(tokenized_df)
+        
+        # Filter out short words and explode to get individual words
+        from pyspark.sql.functions import explode, length
+        word_frequency_df = filtered_df.select(
+            explode("filtered_words").alias("word")
         ).filter(length("word") > 3)  # Filter out short words
+        
+        # Filter out numbers and common patterns that aren't meaningful
+        word_frequency_df = word_frequency_df.filter(
+            ~col("word").rlike("^\\d+$") &                   # Filter out pure numbers
+            ~col("word").rlike("^[a-z]{1,3}$") &             # Filter out very short words
+            ~col("word").isin(stop_words)                    # Double-check stop words
+        )
         
         word_counts = word_frequency_df.groupBy("word").count().orderBy(desc("count"))
         
@@ -203,11 +239,18 @@ def analyze_word_frequency(spark, df, output_path, s3_client=None, s3_bucket=Non
         os.makedirs(word_counts_output, exist_ok=True)
         word_counts.limit(1000).write.mode("overwrite").parquet(word_counts_output)
         
-        # Analyze sentiment by word
-        word_sentiment_df = df.select(
-            explode(split(lower(col("text_content")), "\\s+")).alias("word"),
+        # Analyze sentiment by word - using filtered words instead of raw
+        word_sentiment_df = filtered_df.select(
+            explode("filtered_words").alias("word"),
             "sentiment_score"
         ).filter(length("word") > 3)  # Filter out short words
+        
+        # Apply the same filtering as above
+        word_sentiment_df = word_sentiment_df.filter(
+            ~col("word").rlike("^\\d+$") &                   # Filter out pure numbers
+            ~col("word").rlike("^[a-z]{1,3}$") &             # Filter out very short words
+            ~col("word").isin(stop_words)                    # Double-check stop words
+        )
         
         word_sentiment = word_sentiment_df.groupBy("word").agg(
             avg("sentiment_score").alias("avg_sentiment"),
