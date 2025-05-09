@@ -1,143 +1,157 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import ReactWordcloud from 'react-wordcloud';
-import { fetchKeywords, KeywordData } from '../api/api';
+import React, { useState, useEffect } from 'react';
+import { fetchSentimentKeywords, KeywordData } from '../api/api';
 
 interface WordCloudProps {
   subreddit: string;
-  timeframe: string;
+  timeframe?: string;
+  width?: number;
+  height?: number;
+  initialActiveTab?: 'positive' | 'negative';
 }
 
-interface WordCloudWord {
-  text: string;
-  value: number;
-}
-
-const WordCloud: React.FC<WordCloudProps> = ({ subreddit, timeframe }) => {
-  const [words, setWords] = useState<WordCloudWord[]>([]);
+const WordCloud: React.FC<WordCloudProps> = ({
+  subreddit,
+  timeframe = 'weekly',
+  width = 700,
+  height = 400,
+  initialActiveTab = 'positive'
+}) => {
+  const [keywords, setKeywords] = useState<{ positive: KeywordData[]; negative: KeywordData[] }>({
+    positive: [],
+    negative: []
+  });
+  const [activeTab, setActiveTab] = useState<'positive' | 'negative'>(initialActiveTab);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalPostCount, setTotalPostCount] = useState<number>(0);
 
   useEffect(() => {
-    const fetchKeywordData = async () => {
+    const loadKeywords = async () => {
       if (!subreddit) return;
       
       setLoading(true);
       setError(null);
       
       try {
-        const data = await fetchKeywords(subreddit, timeframe);
-        
-        // Get post count if available
-        if (data.length > 0 && data[0].post_count) {
-          setTotalPostCount(data[0].post_count);
-        }
-        
-        // Convert to format needed by react-wordcloud
-        const wordCloudData = data.map(keyword => ({
-          text: keyword.keyword,
-          value: keyword.weight
-        }));
-        
-        setWords(wordCloudData);
+        const data = await fetchSentimentKeywords(subreddit, timeframe);
+        setKeywords(data);
       } catch (err) {
+        console.error('Error loading sentiment keywords:', err);
         setError('Failed to load keyword data');
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchKeywordData();
+    loadKeywords();
   }, [subreddit, timeframe]);
 
-  // Wordcloud options with theme colors
-  const options = {
-    colors: [
-      'var(--scale-accent)',
-      'var(--scale-accent-light)',
-      '#4a58e0',
-      '#7986cb',
-      '#9fa8da',
-      '#6200ee',
-      '#3700b3',
-    ],
-    enableTooltip: true,
-    deterministic: true,
-    fontFamily: 'Inter, system-ui, sans-serif',
-    fontSizes: [16, 70],
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    padding: 3,
-    rotations: 2,
-    rotationAngles: [0, 0], // Only horizontal text
-    scale: 'sqrt',
-    spiral: 'archimedean',
-    transitionDuration: 1000
-  };
-  
-  // Callbacks for interactions
-  const getCallback = useCallback((callback: string) => {
-    return function(word: WordCloudWord, event: React.MouseEvent) {
-      if (callback === 'onWordClick') {
-        console.log(`${word.text}: ${word.value}`);
-      }
-    };
-  }, []);
-  
-  const callbacks = {
-    getWordColor: (word: WordCloudWord) => {
-      // More important words get more vibrant colors
-      return word.value > 20 ? 'var(--scale-accent)' : '';
-    },
-    getWordTooltip: (word: WordCloudWord) => `${word.text}: ${Math.round(word.value)} occurrences`,
-    onWordClick: getCallback('onWordClick'),
-    onWordMouseOver: getCallback('onWordMouseOver'),
-    onWordMouseOut: getCallback('onWordMouseOut')
-  };
+  // Update active tab when initialActiveTab prop changes
+  useEffect(() => {
+    setActiveTab(initialActiveTab);
+  }, [initialActiveTab]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center py-16">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--scale-accent)]"></div>
-      </div>
-    );
+    return <div className="flex justify-center items-center py-6">Loading keyword data...</div>;
   }
 
   if (error) {
+    return <div className="text-red-500 text-center py-4">{error}</div>;
+  }
+
+  if (!keywords.positive.length && !keywords.negative.length) {
     return (
-      <div className="text-red-500 text-center py-8 bg-red-50 rounded-lg p-4">
-        <div className="mb-2">⚠️ Error</div>
-        <div>{error}</div>
+      <div className="text-center py-4">
+        No keyword data available for r/{subreddit}.
       </div>
     );
   }
-
-  if (words.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <div className="bg-[var(--scale-bg-light)] p-8 rounded-lg">
-          <h3 className="text-lg font-medium mb-2">No Keywords Available</h3>
-          <p className="text-[var(--scale-text-secondary)]">
-            No keyword data is available for r/{subreddit} in the selected timeframe.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+  
+  // Get the keywords for the active tab
+  const displayKeywords = keywords[activeTab] || [];
+  
+  // Sort keywords by weight (descending)
+  const sortedKeywords = [...displayKeywords].sort((a, b) => b.weight - a.weight);
+  
   return (
     <div>
-      <div style={{ height: 350, width: '100%' }} className="bg-[var(--scale-bg-light)] rounded-lg px-2">
-        <ReactWordcloud 
-          words={words} 
-          options={options} 
-          callbacks={callbacks}
-          maxWords={100}
-        />
+      <div className="flex justify-center mb-4">
+        <div className="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            type="button"
+            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
+              activeTab === 'positive'
+                ? 'bg-green-600 text-white'
+                : 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-200'
+            }`}
+            onClick={() => setActiveTab('positive')}
+          >
+            Positive Keywords
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
+              activeTab === 'negative'
+                ? 'bg-red-600 text-white'
+                : 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-200'
+            }`}
+            onClick={() => setActiveTab('negative')}
+          >
+            Negative Keywords
+          </button>
+        </div>
       </div>
-      <div className="mt-4 text-right text-sm text-[var(--scale-text-light)]">
-        <span>Based on {words.length} keywords from {totalPostCount.toLocaleString()} posts</span>
+
+      <div className="flex flex-wrap justify-center items-center gap-2 p-4" style={{ minHeight: `${height}px`, width: `${width}px`, maxWidth: '100%', margin: '0 auto' }}>
+        {sortedKeywords.map((keyword, index) => {
+          // Calculate size based on weight (normalize between 100% and 200%)
+          const minWeight = sortedKeywords[sortedKeywords.length - 1]?.weight || 1;
+          const maxWeight = sortedKeywords[0]?.weight || 100;
+          const range = maxWeight - minWeight;
+          const normalizedSize = range === 0 
+            ? 100 
+            : 100 + Math.round((keyword.weight - minWeight) / range * 100);
+          
+          // Calculate opacity based on weight
+          const opacity = range === 0 
+            ? 0.7 
+            : 0.5 + ((keyword.weight - minWeight) / range * 0.5);
+            
+          // Get appropriate color based on sentiment and tab
+          const getColor = () => {
+            if (activeTab === 'positive') {
+              return 'rgb(39, 174, 96)';
+            } else {
+              return 'rgb(231, 76, 60)';
+            }
+          };
+          
+          return (
+            <div 
+              key={`${keyword.keyword}-${index}`}
+              className="inline-block m-1 px-3 py-2 rounded-lg hover:shadow-md transition-all duration-200 cursor-default"
+              style={{
+                fontSize: `${normalizedSize}%`,
+                color: getColor(),
+                opacity: opacity,
+                fontWeight: normalizedSize > 150 ? 'bold' : 'normal',
+                transform: `rotate(${(index % 5) - 2}deg)`
+              }}
+              title={`${keyword.keyword}: weight ${keyword.weight.toFixed(2)}`}
+            >
+              {keyword.keyword}
+            </div>
+          );
+        })}
+        
+        {!sortedKeywords.length && (
+          <div className="text-gray-500">
+            No {activeTab} keywords available for visualization.
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 text-sm text-center text-gray-500">
+        Showing the top {sortedKeywords.length} {activeTab} keywords for r/{subreddit}
       </div>
     </div>
   );

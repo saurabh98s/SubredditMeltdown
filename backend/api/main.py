@@ -73,6 +73,7 @@ class KeywordData(BaseModel):
     weight: float
     timeframe: str
     subreddit: str
+    sentiment_score: Optional[float] = None
 
 class SentimentTimeseriesData(BaseModel):
     date: str
@@ -406,6 +407,106 @@ async def get_keywords(
             
     except Exception as e:
         logger.error(f"Error retrieving keyword data: {str(e)}")
+        logger.error("Full exception:", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/keywords/sentiment", response_model=Dict[str, List[KeywordData]])
+async def get_sentiment_keywords(
+    subreddit: str = Query(..., description="Subreddit name"),
+    timeframe: str = Query("weekly", description="Timeframe (daily, weekly, monthly)")
+):
+    """Get top positive and negative keywords for a specific subreddit and timeframe"""
+    try:
+        positive_keywords = []
+        negative_keywords = []
+        
+        # Get positive words
+        pos_s3_path = f"analytics/word_analysis/positive_words_{subreddit}"
+        logger.info(f"Reading positive words from {pos_s3_path}")
+        pos_df = read_parquet_from_minio(bucket_name, pos_s3_path)
+        
+        # Get negative words
+        neg_s3_path = f"analytics/word_analysis/negative_words_{subreddit}"
+        logger.info(f"Reading negative words from {neg_s3_path}")
+        neg_df = read_parquet_from_minio(bucket_name, neg_s3_path)
+        
+        # Comprehensive stop words list for filtering
+        stop_words = {
+            'that', 'have', 'they', 'this', 'with', 'just', 'your', 'like', 'what', 'about', 
+            'more', 'their', 'because', "it's", 'would', "don't", 'from', 'when', 'will', 
+            'even', 'some', 'there', 'think', 'than', 'make', 'want', 'only', 'them', 'being',
+            'then', 'much', 'know', 'need', 'really', 'could', 'other', 'most', "you're",
+            'still', 'into', 'also', 'should', 'where', 'been', 'were', 'which', 'these',
+            'those', 'does', "doesn't", 'doing', 'done', 'each', 'every', 'gets', 'getting',
+            'goes', 'going', 'came', 'come', 'comes', 'coming', 'here', 'herself', 'himself',
+            'itself', 'myself', 'yourself', 'ourselves', 'themselves', 'very', 'well', 'says',
+            'said', 'saying', 'tell', 'told', 'tells', 'telling', 'while', 'years', 'days',
+            'months', 'week', 'weeks', 'month', 'year', 'hours', 'hour', 'minutes', 'minute'
+        }
+        
+        # Process positive words
+        if not pos_df.empty and 'word' in pos_df.columns and 'count' in pos_df.columns:
+            # Ensure columns exist and filter stop words
+            pos_df = pos_df[~pos_df['word'].str.lower().isin(stop_words)]
+            pos_df = pos_df[~pos_df['word'].str.match(r'^\d+$')]  # Filter numbers
+            pos_df = pos_df[pos_df['word'].str.len() > 2]  # Filter short words
+            
+            # Sort by count and sentiment
+            pos_df = pos_df.sort_values(by=['count', 'avg_sentiment'], ascending=[False, False])
+            
+            # Take top positive keywords
+            top_pos = pos_df.head(30)
+            
+            # Convert to the expected format
+            for _, row in top_pos.iterrows():
+                try:
+                    keyword = KeywordData(
+                        keyword=row['word'],
+                        weight=float(row['count']),
+                        timeframe=timeframe,
+                        subreddit=subreddit,
+                        sentiment_score=float(row['avg_sentiment']) if 'avg_sentiment' in row else 0.0
+                    )
+                    positive_keywords.append(keyword)
+                except Exception as e:
+                    logger.error(f"Error converting positive keyword: {str(e)}")
+                    continue
+        
+        # Process negative words
+        if not neg_df.empty and 'word' in neg_df.columns and 'count' in neg_df.columns:
+            # Ensure columns exist and filter stop words
+            neg_df = neg_df[~neg_df['word'].str.lower().isin(stop_words)]
+            neg_df = neg_df[~neg_df['word'].str.match(r'^\d+$')]  # Filter numbers
+            neg_df = neg_df[neg_df['word'].str.len() > 2]  # Filter short words
+            
+            # Sort by count and most negative sentiment
+            neg_df = neg_df.sort_values(by=['count', 'avg_sentiment'], ascending=[False, True])
+            
+            # Take top negative keywords
+            top_neg = neg_df.head(30)
+            
+            # Convert to the expected format
+            for _, row in top_neg.iterrows():
+                try:
+                    keyword = KeywordData(
+                        keyword=row['word'],
+                        weight=float(row['count']),
+                        timeframe=timeframe,
+                        subreddit=subreddit,
+                        sentiment_score=float(row['avg_sentiment']) if 'avg_sentiment' in row else 0.0
+                    )
+                    negative_keywords.append(keyword)
+                except Exception as e:
+                    logger.error(f"Error converting negative keyword: {str(e)}")
+                    continue
+                    
+        return {
+            "positive": positive_keywords,
+            "negative": negative_keywords
+        }
+        
+    except Exception as e:
+        logger.error(f"Error retrieving sentiment keywords: {str(e)}")
         logger.error("Full exception:", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -1004,26 +1105,47 @@ async def get_conversations(
         start_date = (event_dt - timedelta(days=window_days)).strftime("%Y-%m-%d")
         end_date = (event_dt + timedelta(days=window_days)).strftime("%Y-%m-%d")
         
-        # Get event info - first try loading from events.json
-        event_info = {"event": "Unknown event", "category": "unknown"}
+        # Get event info - first check for generated events
+        event_info = {"event": "Detected Event", "category": "unknown"}
+        
         try:
-            # Try to load from events.json file
-            with open("api/mock_data/events.json", "r") as f:
-                events_data = json.load(f)
+            # First check for dynamically generated events
+            generated_events = await generate_events(
+                subreddit=subreddit,
+                start_date=event_date,
+                end_date=event_date,
+                content_type="submissions"
+            )
+            
+            if generated_events:
+                # Use the first generated event on this date
+                event_info = {
+                    "event": generated_events[0].event,
+                    "category": generated_events[0].category,
+                    "impact_score": generated_events[0].impact_score
+                }
+                logger.info(f"Using generated event: {event_info['event']}")
+            else:
+                # Try to load from events.json file
+                try:
+                    with open("api/mock_data/events.json", "r") as f:
+                        events_data = json.load(f)
+                        
+                    # Find event matching the date
+                    for event in events_data:
+                        if event.get("date") == event_date:
+                            event_info = event
+                            break
+                except Exception as e:
+                    logger.warning(f"Error reading events.json: {str(e)}, falling back to default events")
                 
-            # Find event matching the date
-            for event in events_data:
-                if event.get("date") == event_date:
-                    event_info = event
-                    break
-                    
-            if event_info["event"] == "Unknown event":
-                # Fall back to find_events_in_period
-                events = find_events_in_period(event_date, event_date)
-                if events:
-                    event_info = events[0]
+                # If still unknown, check predefined events
+                if event_info["event"] == "Detected Event":
+                    events = find_events_in_period(event_date, event_date)
+                    if events:
+                        event_info = events[0]
         except Exception as e:
-            logger.warning(f"Error reading events.json: {str(e)}, falling back to default events")
+            logger.warning(f"Error retrieving event info: {str(e)}, falling back to default events")
             events = find_events_in_period(event_date, event_date)
             if events:
                 event_info = events[0]
@@ -1043,7 +1165,7 @@ async def get_conversations(
         default_response = {
             "event": {
                 "date": event_date,
-                "name": event_info.get("event", "Unknown event"),
+                "name": event_info.get("event", "Detected Event"),
                 "category": event_info.get("category", "unknown"),
                 "impact_score": event_info.get("impact_score", 0.0)
             },
@@ -1115,9 +1237,7 @@ async def get_conversations(
                         # Convert created_utc to datetime - fix deprecation warning
                         if 'created_utc' in df.columns:
                             if df['created_utc'].dtype == 'object':
-                                # First convert to numeric explicitly to avoid the warning
-                                df['created_utc_numeric'] = pd.to_numeric(df['created_utc'], errors='coerce')
-                                df['date'] = pd.to_datetime(df['created_utc_numeric'], unit='s').dt.strftime('%Y-%m-%d')
+                                df['date'] = pd.to_datetime(df['created_utc'], unit='s').dt.strftime('%Y-%m-%d')
                             else:
                                 df['date'] = pd.to_datetime(df['created_utc'].astype(float), unit='s').dt.strftime('%Y-%m-%d')
                         else:
@@ -1154,11 +1274,18 @@ async def get_conversations(
                                         continue
                                     
                                     # Check if content is related to the event
-                                    if event_keywords and not is_event_related(content, event_keywords):
-                                        continue
+                                    is_relevant = True
+                                    if event_keywords:
+                                        is_relevant = is_event_related(content, event_keywords)
                                         
                                     # Calculate sentiment
                                     sentiment = quick_sentiment(content)
+                                    
+                                    # For generated sentiment events, also filter by sentiment direction
+                                    if "negative sentiment shift" in event_info.get("event", "").lower() and sentiment > 0:
+                                        continue
+                                    if "positive sentiment shift" in event_info.get("event", "").lower() and sentiment < 0:
+                                        continue
                                     
                                     item_date = item.get('date')
                                     if isinstance(item_date, pd.Timestamp):
@@ -1183,7 +1310,7 @@ async def get_conversations(
                                         "sentiment": float(sentiment),
                                         "days_from_event": days_from_event,
                                         "type": "submission",
-                                        "event_relevant": True  # Mark as event relevant since we filtered
+                                        "event_relevant": is_relevant
                                     })
                                 except Exception as e:
                                     logger.error(f"Error processing submission item: {str(e)}")
@@ -1198,11 +1325,18 @@ async def get_conversations(
                                         continue
                                     
                                     # Check if content is related to the event
-                                    if event_keywords and not is_event_related(body, event_keywords):
-                                        continue
+                                    is_relevant = True
+                                    if event_keywords:
+                                        is_relevant = is_event_related(body, event_keywords)
                                         
                                     # Calculate sentiment
                                     sentiment = quick_sentiment(body)
+                                    
+                                    # For generated sentiment events, also filter by sentiment direction
+                                    if "negative sentiment shift" in event_info.get("event", "").lower() and sentiment > 0:
+                                        continue
+                                    if "positive sentiment shift" in event_info.get("event", "").lower() and sentiment < 0:
+                                        continue
                                     
                                     item_date = item.get('date')
                                     if isinstance(item_date, pd.Timestamp):
@@ -1227,7 +1361,7 @@ async def get_conversations(
                                         "sentiment": float(sentiment),
                                         "days_from_event": days_from_event,
                                         "type": "comment",
-                                        "event_relevant": True  # Mark as event relevant since we filtered
+                                        "event_relevant": is_relevant
                                     })
                                 except Exception as e:
                                     logger.error(f"Error processing comment item: {str(e)}")
@@ -1244,6 +1378,16 @@ async def get_conversations(
             # Sort by relevance (days from event, score, and sentiment impact)
             all_conversations.sort(key=lambda x: (abs(x.get('days_from_event', 0)), x.get('score', 0), abs(x.get('sentiment', 0))), reverse=True)
             
+            # For generated sentiment events, prioritize items with matching sentiment direction
+            if "sentiment shift" in event_info.get("event", "").lower():
+                is_negative = "negative sentiment shift" in event_info.get("event", "").lower()
+                all_conversations.sort(key=lambda x: (
+                    not x.get("event_relevant", True),  # Relevant items first
+                    (x.get("sentiment", 0) > 0) if is_negative else (x.get("sentiment", 0) < 0),  # Matching sentiment direction
+                    abs(x.get('days_from_event', 0)),  # Then by proximity to event date
+                    -x.get('score', 0)  # Then by score (descending)
+                ))
+            
             # Log sentiment values for debugging
             for i, conv in enumerate(all_conversations[:5]):
                 logger.info(f"Conversation {i+1} sentiment: {conv.get('sentiment')}")
@@ -1252,7 +1396,7 @@ async def get_conversations(
             return {
                 "event": {
                     "date": event_date,
-                    "name": event_info.get("event", "Unknown event"),
+                    "name": event_info.get("event", "Detected Event"),
                     "category": event_info.get("category", "unknown"),
                     "impact_score": event_info.get("impact_score", 0.0)
                 },
@@ -1269,7 +1413,7 @@ async def get_conversations(
         return {
             "event": {
                 "date": event_date,
-                "name": "Unknown event",
+                "name": "Detected Event",
                 "category": "unknown"
             },
             "conversations": []
@@ -1389,6 +1533,186 @@ async def generate_events(
         
     except Exception as e:
         logger.error(f"Error generating events: {str(e)}")
+        logger.exception("Full exception:")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/trending/negative", response_model=Dict[str, Any])
+async def get_negative_trend_drivers(
+    subreddit: str = Query(..., description="Subreddit name"),
+    start_date: str = Query(..., description="Start date (YYYY-MM-DD)"),
+    end_date: str = Query(..., description="End date (YYYY-MM-DD)"),
+    content_type: str = Query("submissions", description="Content type (submissions or comments)"),
+    limit: int = Query(20, description="Maximum number of conversations to return")
+):
+    """Find conversations that significantly contributed to negative sentiment trends"""
+    try:
+        # First get sentiment data to identify negative trends
+        sentiment_data = await get_sentiment(subreddit, start_date, end_date, content_type)
+        
+        if not sentiment_data:
+            return {
+                "trend": "neutral",
+                "conversations": []
+            }
+        
+        # Sort by date
+        sentiment_data.sort(key=lambda x: x.date)
+        
+        # Calculate rolling average to identify trend
+        window_size = min(7, len(sentiment_data))
+        daily_trends = []
+        
+        for i in range(window_size, len(sentiment_data)):
+            # Calculate previous window average
+            prev_window = sentiment_data[i-window_size:i]
+            prev_avg = sum(item.avg_sentiment * item.post_count for item in prev_window) / max(1, sum(item.post_count for item in prev_window))
+            
+            # Current day
+            current = sentiment_data[i]
+            
+            # If there's a significant drop
+            if current.avg_sentiment < prev_avg - 0.1:
+                daily_trends.append({
+                    "date": current.date,
+                    "prev_sentiment": prev_avg,
+                    "current_sentiment": current.avg_sentiment,
+                    "drop": prev_avg - current.avg_sentiment
+                })
+        
+        # If no significant negative trends found
+        if not daily_trends:
+            # Check if there's just an overall negative trend
+            if len(sentiment_data) > 1:
+                first_half = sentiment_data[:len(sentiment_data)//2]
+                second_half = sentiment_data[len(sentiment_data)//2:]
+                
+                first_avg = sum(item.avg_sentiment * item.post_count for item in first_half) / max(1, sum(item.post_count for item in first_half))
+                second_avg = sum(item.avg_sentiment * item.post_count for item in second_half) / max(1, sum(item.post_count for item in second_half))
+                
+                if first_avg - second_avg > 0.1:
+                    # There's an overall negative trend
+                    most_negative_day = min(sentiment_data, key=lambda x: x.avg_sentiment)
+                    daily_trends.append({
+                        "date": most_negative_day.date,
+                        "prev_sentiment": first_avg,
+                        "current_sentiment": most_negative_day.avg_sentiment,
+                        "drop": first_avg - most_negative_day.avg_sentiment
+                    })
+        
+        # Sort by drop magnitude
+        daily_trends.sort(key=lambda x: x["drop"], reverse=True)
+        
+        # If still no trends, return empty result
+        if not daily_trends:
+            return {
+                "trend": "neutral",
+                "conversations": []
+            }
+        
+        # Use the most significant drop date to find conversations
+        significant_date = daily_trends[0]["date"]
+        
+        # Add a day window to find content
+        date_obj = datetime.strptime(significant_date, "%Y-%m-%d")
+        day_before = (date_obj - timedelta(days=1)).strftime("%Y-%m-%d")
+        day_after = (date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        # Find negative content on that day
+        samples = []
+        prefix = f"cleaned/{content_type}/{subreddit}"
+        
+        try:
+            # List objects in the directory
+            response = s3_client.list_objects_v2(
+                Bucket="mh-trends",
+                Prefix=prefix
+            )
+            
+            if 'Contents' in response:
+                # Find parquet files
+                parquet_files = [obj['Key'] for obj in response['Contents'] 
+                              if obj['Key'].endswith('.parquet')]
+                
+                # Process each file
+                for file_key in parquet_files[:5]:  # Limit files to check
+                    try:
+                        # Read parquet into a pandas dataframe
+                        response = s3_client.get_object(Bucket="mh-trends", Key=file_key)
+                        parquet_data = BytesIO(response['Body'].read())
+                        
+                        df = pq.read_table(parquet_data).to_pandas()
+                        
+                        # Convert created_utc to date
+                        if 'created_utc' in df.columns:
+                            if df['created_utc'].dtype == 'object':
+                                df['date'] = pd.to_datetime(df['created_utc'], unit='s').dt.strftime('%Y-%m-%d')
+                            else:
+                                df['date'] = pd.to_datetime(df['created_utc'].astype(float), unit='s').dt.strftime('%Y-%m-%d')
+                        
+                        # Filter by date range
+                        filtered_df = df[(df['date'] >= day_before) & (df['date'] <= day_after)]
+                        
+                        if filtered_df.empty:
+                            continue
+                            
+                        # Analyze sentiment of each conversation
+                        for _, row in filtered_df.iterrows():
+                            # Extract content based on type
+                            content = ""
+                            
+                            if content_type == "submissions":
+                                title = str(row.get('title', '')) if row.get('title') is not None else ''
+                                body = str(row.get('selftext', '')) if row.get('selftext') is not None else ''
+                                content = f"{title}\n{body}" if body and body not in ["[deleted]", "[removed]"] else title
+                            else:  # comments
+                                body = str(row.get('body', '')) if row.get('body') is not None else ''
+                                content = body
+                            
+                            # Skip if no meaningful content
+                            if not content or len(content.strip()) < 5:
+                                continue
+                                
+                            # Calculate sentiment
+                            sentiment = quick_sentiment(content)
+                            
+                            # Only include negative content
+                            if sentiment < -0.1:
+                                item = {
+                                    "id": str(row.get('id', '')),
+                                    "date": row.get('date'),
+                                    "content": content[:500] + "..." if len(content) > 500 else content,
+                                    "author": str(row.get('author', '[deleted]')),
+                                    "score": int(row.get('score', 0)) if row.get('score') is not None else 0,
+                                    "sentiment": sentiment,
+                                    "type": content_type[:-1]  # submission or comment
+                                }
+                                
+                                # Add submission-specific fields
+                                if content_type == "submissions":
+                                    item["title"] = str(row.get('title', ''))
+                                    item["url"] = str(row.get('url', ''))
+                                
+                                samples.append(item)
+                    except Exception as e:
+                        logger.error(f"Error processing file {file_key}: {str(e)}")
+                        continue
+        except Exception as e:
+            logger.error(f"Error listing objects: {str(e)}")
+        
+        # Sort by sentiment (most negative first)
+        samples.sort(key=lambda x: x["sentiment"])
+        
+        return {
+            "trend": "negative",
+            "trend_date": significant_date,
+            "sentiment_change": daily_trends[0]["drop"],
+            "prev_sentiment": daily_trends[0]["prev_sentiment"],
+            "current_sentiment": daily_trends[0]["current_sentiment"],
+            "conversations": samples[:limit]
+        }
+    
+    except Exception as e:
+        logger.error(f"Error finding negative trend drivers: {str(e)}")
         logger.exception("Full exception:")
         raise HTTPException(status_code=500, detail=str(e))
 

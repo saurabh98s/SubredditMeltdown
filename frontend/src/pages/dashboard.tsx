@@ -10,6 +10,7 @@ import ConversationSamples from '../components/ConversationSamples';
 import KeywordPanel from '../components/KeywordPanel';
 import { fetchSubreddits, fetchEvents, fetchGeneratedEvents } from '../api/api';
 import styles from '../styles/Dashboard.module.css';
+import Button from '../components/Button';
 
 interface EventData {
   date: string;
@@ -246,32 +247,36 @@ export default function Dashboard() {
         <div className={styles.grid}>
           <div className={styles.col8}>
             {/* Tab Navigation */}
-            <div className={styles.tabs}>
-              <button
+            <div className="flex flex-wrap gap-2 mb-4 border-b border-gray-200 pb-2">
+              <Button
                 onClick={() => setActiveTab('timeseries')}
-                className={`${styles.tab} ${activeTab === 'timeseries' ? styles.tabActive : ''}`}
+                variant={activeTab === 'timeseries' ? 'primary' : 'outline'}
+                size="sm" 
               >
                 Sentiment Timeseries
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setActiveTab('correlations')}
-                className={`${styles.tab} ${activeTab === 'correlations' ? styles.tabActive : ''}`}
+                variant={activeTab === 'correlations' ? 'primary' : 'outline'}
+                size="sm"
               >
                 Event Correlations
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setActiveTab('conversations')}
-                className={`${styles.tab} ${activeTab === 'conversations' ? styles.tabActive : ''}`}
+                variant={activeTab === 'conversations' ? 'primary' : 'outline'}
+                size="sm"
                 disabled={!selectedEventDate}
               >
                 Conversations
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setActiveTab('keywords')}
-                className={`${styles.tab} ${activeTab === 'keywords' ? styles.tabActive : ''}`}
+                variant={activeTab === 'keywords' ? 'primary' : 'outline'}
+                size="sm"
               >
                 Keywords
-              </button>
+              </Button>
             </div>
 
             {/* Tab Content */}
@@ -284,6 +289,7 @@ export default function Dashboard() {
                     endDate={endDate}
                     contentType={contentType}
                     onEventSelect={handleEventSelect}
+                    initialViewMode="chart"
                   />
                 )}
 

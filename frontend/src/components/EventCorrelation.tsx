@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchEventCorrelation } from '../api/api';
+import Button from './Button';
 
 interface EventCorrelationProps {
   subreddit: string;
@@ -19,6 +20,8 @@ const EventCorrelation: React.FC<EventCorrelationProps> = ({
   const [correlations, setCorrelations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [showTable, setShowTable] = useState<boolean>(true);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const getEventCorrelation = async () => {
@@ -47,20 +50,39 @@ const EventCorrelation: React.FC<EventCorrelationProps> = ({
     }
   };
 
+  const handleCategoryFilter = (category: string) => {
+    setActiveCategory(activeCategory === category ? null : category);
+  };
+
+  // Get unique categories from correlations
+  const categories = correlations
+    .map(item => item.event.category?.toLowerCase())
+    .filter((category, index, self) => 
+      category && self.indexOf(category) === index
+    );
+
+  const filteredCorrelations = activeCategory 
+    ? correlations.filter(item => 
+        item.event.category?.toLowerCase() === activeCategory.toLowerCase()
+      )
+    : correlations;
+
   if (loading) {
-    return <div className="flex justify-center py-8"><div className="scale-spinner"></div></div>;
+    return <div className="flex justify-center items-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    </div>;
   }
 
   if (error) {
-    return <div className="text-red-500 text-center py-8">{error}</div>;
+    return <div className="py-8 text-center text-red-500">{error}</div>;
   }
 
   if (correlations.length === 0) {
     return (
-      <div className="text-center py-8">
-        <div className="bg-[var(--scale-bg-light)] p-8 rounded-lg">
-          <h3 className="scale-heading-3 mb-2">No Event Correlations Available</h3>
-          <p className="scale-text">
+      <div className="py-8 text-center">
+        <div className="bg-gray-50 p-8 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-medium mb-2">No Event Correlations Available</h3>
+          <p className="text-gray-600">
             No correlation data is available for this period and subreddit combination.
           </p>
         </div>
@@ -70,28 +92,69 @@ const EventCorrelation: React.FC<EventCorrelationProps> = ({
 
   return (
     <div className="overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="scale-table">
-          <thead>
+      <h3 className="text-lg font-medium mb-4">
+        Event Impact Analysis for r/{subreddit}
+      </h3>
+      
+      {/* Controls */}
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <div className="flex flex-wrap gap-2">
+          {categories.map(category => (
+            <Button
+              key={category}
+              onClick={() => handleCategoryFilter(category)}
+              variant={activeCategory === category ? "primary" : "outline"}
+              size="sm"
+            >
+              {category}
+            </Button>
+          ))}
+          {activeCategory && (
+            <Button
+              onClick={() => setActiveCategory(null)}
+              variant="secondary"
+              size="sm"
+            >
+              Clear Filter
+            </Button>
+          )}
+        </div>
+        
+        <Button 
+          onClick={() => setShowTable(!showTable)}
+          variant="outline"
+          size="sm"
+        >
+          {showTable ? 'Show Visualization' : 'Show Table'}
+        </Button>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 mb-6 overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th>Date</th>
-              <th>Event</th>
-              <th>Category</th>
-              <th>Impact</th>
-              <th>Keywords</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impact</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keywords</th>
             </tr>
           </thead>
-          <tbody>
-            {correlations.map((item, index) => (
-              <tr key={index} onClick={() => handleEventClick(item.event.date)} style={{ cursor: 'pointer' }}>
-                <td className="whitespace-nowrap">{item.event.date}</td>
-                <td className="font-medium text-[var(--scale-text-primary)]">{item.event.event}</td>
-                <td>
-                  <span className={`scale-badge ${getCategoryBadgeClass(item.event.category)}`}>
+          <tbody className="divide-y divide-gray-200">
+            {filteredCorrelations.map((item, index) => (
+              <tr 
+                key={index} 
+                onClick={() => handleEventClick(item.event.date)} 
+                className="hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <td className="px-4 py-3 whitespace-nowrap text-sm">{item.event.date}</td>
+                <td className="px-4 py-3 text-sm font-medium">{item.event.event}</td>
+                <td className="px-4 py-3 text-sm">
+                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getCategoryColorClass(item.event.category)}`}>
                     {item.event.category}
                   </span>
                 </td>
-                <td>
+                <td className="px-4 py-3 text-sm">
                   <div className="flex items-center">
                     <span className={`${getSentimentColor(item.sentiment_change)}`}>
                       {(item.sentiment_change > 0 ? '+' : '') + item.sentiment_change.toFixed(2)}
@@ -99,10 +162,12 @@ const EventCorrelation: React.FC<EventCorrelationProps> = ({
                     <SentimentArrow value={item.sentiment_change} />
                   </div>
                 </td>
-                <td>
+                <td className="px-4 py-3 text-sm">
                   <div className="flex flex-wrap gap-1">
                     {item.related_keywords.map((keyword: string, i: number) => (
-                      <span key={i} className="scale-badge scale-badge-blue">{keyword}</span>
+                      <span key={i} className="inline-block px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded-full">
+                        {keyword}
+                      </span>
                     ))}
                   </div>
                 </td>
@@ -112,15 +177,15 @@ const EventCorrelation: React.FC<EventCorrelationProps> = ({
         </table>
       </div>
       
-      <div className="mt-6 p-4 bg-[var(--scale-bg-light)] rounded-lg">
-        <h3 className="font-semibold text-[var(--scale-text-primary)] text-lg mb-2">About Event Impact Analysis</h3>
-        <p className="scale-text">
-          This analysis shows how key events correlate with changes in sentiment across the selected subreddit. 
+      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <h3 className="font-medium text-gray-900 text-base mb-2">About Event Impact Analysis</h3>
+        <p className="text-gray-600 text-sm">
+          This analysis shows how key events correlate with changes in sentiment across r/{subreddit}. 
           A positive impact score indicates a positive shift in sentiment following the event, while a negative score 
-          indicates a decrease in sentiment. The keywords represent terms frequently associated with discussions about these events.
+          indicates a decrease in sentiment.
         </p>
-        <p className="scale-text mt-2">
-          <strong>Content type:</strong> {contentType === 'submissions' ? 'Posts' : 'Comments'}
+        <p className="text-gray-600 text-sm mt-2">
+          Click on any event row to view conversations from that date.
         </p>
       </div>
     </div>
@@ -137,16 +202,21 @@ const SentimentArrow: React.FC<{ value: number }> = ({ value }) => {
 };
 
 // Helper functions
-const getCategoryBadgeClass = (category: string): string => {
+const getCategoryColorClass = (category: string): string => {
   const categories: { [key: string]: string } = {
-    'politics': 'scale-badge-blue',
-    'platform': 'scale-badge-purple',
-    'technology': 'scale-badge-green',
-    'gaming': 'scale-badge-red',
-    'economic': 'scale-badge-yellow'
+    'politics': 'bg-blue-100 text-blue-800',
+    'platform': 'bg-purple-100 text-purple-800',
+    'technology': 'bg-green-100 text-green-800',
+    'gaming': 'bg-orange-100 text-orange-800',
+    'economic': 'bg-yellow-100 text-yellow-800',
+    'community': 'bg-indigo-100 text-indigo-800',
+    'news': 'bg-cyan-100 text-cyan-800',
+    'entertainment': 'bg-pink-100 text-pink-800',
+    'sports': 'bg-lime-100 text-lime-800',
+    'pandemic': 'bg-amber-100 text-amber-800',
   };
   
-  return categories[category] || 'scale-badge-blue';
+  return categories[category?.toLowerCase()] || 'bg-gray-100 text-gray-800';
 };
 
 const getSentimentColor = (value: number): string => {

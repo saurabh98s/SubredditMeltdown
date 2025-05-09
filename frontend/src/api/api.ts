@@ -28,7 +28,8 @@ export interface KeywordData {
   weight: number;
   timeframe: string;
   subreddit: string;
-  post_count: number;
+  post_count?: number;
+  sentiment_score?: number;
 }
 
 export interface EventCorrelationData {
@@ -163,6 +164,14 @@ export const fetchSentimentTimeseries = async (
   includeEvents: boolean = true
 ): Promise<SentimentTimeseriesData[]> => {
   try {
+    console.log('Calling API:', `/sentiment/timeseries with params:`, {
+      subreddit,
+      start_date: startDate,
+      end_date: endDate,
+      content_type: contentType,
+      include_events: includeEvents
+    });
+    
     const response = await api.get<SentimentTimeseriesData[]>('/sentiment/timeseries', {
       params: {
         subreddit,
@@ -172,9 +181,49 @@ export const fetchSentimentTimeseries = async (
         include_events: includeEvents
       },
     });
-    return response.data;
+    
+    console.log('API response status:', response.status);
+    console.log('API response headers:', response.headers);
+    console.log('API response data:', response.data);
+    
+    // Check if response data is valid
+    if (!response.data) {
+      console.error('Empty response data from API');
+      return [];
+    }
+    
+    // Handle different possible response formats
+    if (Array.isArray(response.data)) {
+      return response.data.map(item => ({
+        date: item.date,
+        avg_sentiment: typeof item.avg_sentiment === 'number' ? item.avg_sentiment : 0,
+        post_count: typeof item.post_count === 'number' ? item.post_count : 0,
+        events: item.events || []
+      }));
+    } else if (typeof response.data === 'object') {
+      console.warn('Received object instead of array from API');
+      
+      // Try to extract array from response if it's an object with a data property
+      const dataArray = response.data.data || response.data.results || [];
+      
+      if (Array.isArray(dataArray)) {
+        return dataArray.map(item => ({
+          date: item.date,
+          avg_sentiment: typeof item.avg_sentiment === 'number' ? item.avg_sentiment : 0,
+          post_count: typeof item.post_count === 'number' ? item.post_count : 0,
+          events: item.events || []
+        }));
+      }
+      
+      return [];
+    }
+    
+    return [];
   } catch (error) {
     console.error('Error fetching sentiment timeseries:', error);
+    if (error.response) {
+      console.error('Error response:', error.response.status, error.response.data);
+    }
     return [];
   }
 };
@@ -229,6 +278,43 @@ export const fetchGeneratedEvents = async (
   } catch (error) {
     console.error('Error fetching generated events:', error);
     return [];
+  }
+};
+
+export const fetchSentimentKeywords = async (
+  subreddit: string,
+  timeframe: string = 'weekly'
+): Promise<{positive: KeywordData[], negative: KeywordData[]}> => {
+  try {
+    const response = await api.get<{positive: KeywordData[], negative: KeywordData[]}>('/keywords/sentiment', {
+      params: { subreddit, timeframe },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching sentiment keywords:', error);
+    return { positive: [], negative: [] };
+  }
+};
+
+export const fetchNegativeTrendDrivers = async (
+  subreddit: string,
+  startDate: string,
+  endDate: string,
+  contentType: string = 'submissions'
+): Promise<any> => {
+  try {
+    const response = await api.get('/trending/negative', {
+      params: {
+        subreddit,
+        start_date: startDate,
+        end_date: endDate,
+        content_type: contentType
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching negative trend drivers:', error);
+    return { trend: 'neutral', conversations: [] };
   }
 };
 
