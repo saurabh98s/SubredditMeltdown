@@ -145,7 +145,7 @@ export default function Home() {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <h1 className={styles.title}>Reddit Meltdown</h1>
-          <Link href="/dashboard" className={styles.button}>
+          <Link href="/dashboard" className={styles.dashboardButton}>
             Advanced Dashboard
           </Link>
         </div>
@@ -278,6 +278,7 @@ export default function Home() {
                     startDate={startDate}
                     endDate={endDate}
                     contentType={contentType}
+                    showVisualization={false}
                   />
                 </div>
               </div>

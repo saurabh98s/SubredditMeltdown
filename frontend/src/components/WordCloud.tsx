@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactWordcloud from 'react-wordcloud';
 import { fetchSentimentKeywords, KeywordData } from '../api/api';
 
 interface WordCloudProps {
@@ -16,10 +17,7 @@ const WordCloud: React.FC<WordCloudProps> = ({
   height = 400,
   initialActiveTab = 'positive'
 }) => {
-  const [keywords, setKeywords] = useState<{ positive: KeywordData[]; negative: KeywordData[] }>({
-    positive: [],
-    negative: []
-  });
+  const [keywords, setKeywords] = useState<{ positive: KeywordData[]; negative: KeywordData[] }>({ positive: [], negative: [] });
   const [activeTab, setActiveTab] = useState<'positive' | 'negative'>(initialActiveTab);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,10 +25,8 @@ const WordCloud: React.FC<WordCloudProps> = ({
   useEffect(() => {
     const loadKeywords = async () => {
       if (!subreddit) return;
-      
       setLoading(true);
       setError(null);
-      
       try {
         const data = await fetchSentimentKeywords(subreddit, timeframe);
         setKeywords(data);
@@ -41,11 +37,9 @@ const WordCloud: React.FC<WordCloudProps> = ({
         setLoading(false);
       }
     };
-
     loadKeywords();
   }, [subreddit, timeframe]);
 
-  // Update active tab when initialActiveTab prop changes
   useEffect(() => {
     setActiveTab(initialActiveTab);
   }, [initialActiveTab]);
@@ -58,22 +52,31 @@ const WordCloud: React.FC<WordCloudProps> = ({
     return <div className="text-red-500 text-center py-4">{error}</div>;
   }
 
-  if (!keywords.positive.length && !keywords.negative.length) {
-    return (
-      <div className="text-center py-4">
-        No keyword data available for r/{subreddit}.
-      </div>
-    );
-  }
-  
-  // Get the keywords for the active tab
-  const displayKeywords = keywords[activeTab] || [];
-  
-  // Sort keywords by weight (descending)
-  const sortedKeywords = [...displayKeywords].sort((a, b) => b.weight - a.weight);
-  
+  const positiveWords = keywords.positive.map((k) => ({ text: k.keyword, value: k.weight }));
+  const negativeWords = keywords.negative.map((k) => ({ text: k.keyword, value: k.weight }));
+
+  const words = activeTab === 'positive' ? positiveWords : negativeWords;
+
+  const options = {
+    rotations: 2,
+    rotationAngles: [-90, 0] as [number, number],
+    fontSizes: [15, 60] as [number, number],
+    // color scheme based on sentiment
+    colors: activeTab === 'positive' ? ['#27ae60'] : ['#e74c3c'],
+    enableTooltip: true,
+    deterministic: false,
+  };
+
+  const callbacks = {
+    // optional callbacks
+    onWordClick: (word: any) => {
+      console.log(`Clicked on word: ${word.text}`);
+    }
+  };
+
   return (
     <div>
+      {/* Tab Controls */}
       <div className="flex justify-center mb-4">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
@@ -85,7 +88,7 @@ const WordCloud: React.FC<WordCloudProps> = ({
             }`}
             onClick={() => setActiveTab('positive')}
           >
-            Positive Keywords
+            Positive
           </button>
           <button
             type="button"
@@ -96,65 +99,32 @@ const WordCloud: React.FC<WordCloudProps> = ({
             }`}
             onClick={() => setActiveTab('negative')}
           >
-            Negative Keywords
+            Negative
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center items-center gap-2 p-4" style={{ minHeight: `${height}px`, width: `${width}px`, maxWidth: '100%', margin: '0 auto' }}>
-        {sortedKeywords.map((keyword, index) => {
-          // Calculate size based on weight (normalize between 100% and 200%)
-          const minWeight = sortedKeywords[sortedKeywords.length - 1]?.weight || 1;
-          const maxWeight = sortedKeywords[0]?.weight || 100;
-          const range = maxWeight - minWeight;
-          const normalizedSize = range === 0 
-            ? 100 
-            : 100 + Math.round((keyword.weight - minWeight) / range * 100);
-          
-          // Calculate opacity based on weight
-          const opacity = range === 0 
-            ? 0.7 
-            : 0.5 + ((keyword.weight - minWeight) / range * 0.5);
-            
-          // Get appropriate color based on sentiment and tab
-          const getColor = () => {
-            if (activeTab === 'positive') {
-              return 'rgb(39, 174, 96)';
-            } else {
-              return 'rgb(231, 76, 60)';
-            }
-          };
-          
-          return (
-            <div 
-              key={`${keyword.keyword}-${index}`}
-              className="inline-block m-1 px-3 py-2 rounded-lg hover:shadow-md transition-all duration-200 cursor-default"
-              style={{
-                fontSize: `${normalizedSize}%`,
-                color: getColor(),
-                opacity: opacity,
-                fontWeight: normalizedSize > 150 ? 'bold' : 'normal',
-                transform: `rotate(${(index % 5) - 2}deg)`
-              }}
-              title={`${keyword.keyword}: weight ${keyword.weight.toFixed(2)}`}
-            >
-              {keyword.keyword}
-            </div>
-          );
-        })}
-        
-        {!sortedKeywords.length && (
-          <div className="text-gray-500">
-            No {activeTab} keywords available for visualization.
+      {/* Word Cloud */}
+      <div style={{ width: '100%', height: `${height}px` }}>
+        {words.length > 0 ? (
+          <ReactWordcloud
+            words={words}
+            options={options}
+            callbacks={callbacks}
+          />
+        ) : (
+          <div className="text-center text-gray-500 py-6">
+            No {activeTab} keywords available for r/{subreddit}.
           </div>
         )}
       </div>
 
+      {/* Footer Text */}
       <div className="mt-4 text-sm text-center text-gray-500">
-        Showing the top {sortedKeywords.length} {activeTab} keywords for r/{subreddit}
+        Showing the top {words.length} {activeTab} keywords for r/{subreddit}
       </div>
     </div>
   );
 };
 
-export default WordCloud; 
+export default WordCloud;
