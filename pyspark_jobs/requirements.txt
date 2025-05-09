@@ -1,0 +1,4 @@
+boto3==1.37.38
+textblob==0.18.0
+langdetect==1.0.9
+pyspark==3.3.0 

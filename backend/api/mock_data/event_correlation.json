@@ -1,0 +1,154 @@
+[
+  {
+    "event": {
+      "date": "2020-11-03",
+      "event": "U.S. Presidential Election",
+      "category": "politics",
+      "impact_score": 0.89
+    },
+    "sentiment_before": 0.12,
+    "sentiment_after": 0.46,
+    "sentiment_change": 0.34,
+    "related_keywords": ["election", "trump", "biden", "vote", "democracy"],
+    "conversation_samples": [
+      "I can't believe the turnout for this election. Highest in history despite the pandemic!",
+      "Regardless of who wins, I hope this brings some stability back to politics on Reddit.",
+      "The election megathreads across different subreddits are breaking comment records.",
+      "I'm just glad the political ads will stop now that election day is here.",
+      "Everyone needs to be patient as votes are being counted, this could take days."
+    ]
+  },
+  {
+    "event": {
+      "date": "2019-11-13",
+      "event": "Reddit's 'Popular' tab algorithm changes announced",
+      "category": "platform",
+      "impact_score": 0.58
+    },
+    "sentiment_before": 0.23,
+    "sentiment_after": -0.15,
+    "sentiment_change": -0.38,
+    "related_keywords": ["algorithm", "popular", "content", "visibility", "subreddits"],
+    "conversation_samples": [
+      "They're changing the algorithm AGAIN? I just got used to the current one.",
+      "As usual, smaller communities will suffer from this algorithm change.",
+      "I've noticed a big difference in what shows up on my Popular tab already.",
+      "This feels like they're trying to make Reddit more advertiser-friendly.",
+      "The new algorithm seems to favor less controversial content overall."
+    ]
+  },
+  {
+    "event": {
+      "date": "2020-10-28",
+      "event": "U.S. Senate hearings with social media CEOs",
+      "category": "politics",
+      "impact_score": 0.55
+    },
+    "sentiment_before": 0.05,
+    "sentiment_after": -0.24,
+    "sentiment_change": -0.29,
+    "related_keywords": ["senate", "hearing", "regulation", "section230", "zuckerberg"],
+    "conversation_samples": [
+      "The senators asking questions clearly don't understand how these platforms work.",
+      "I wonder if these hearings will lead to any actual regulation of social media.",
+      "Reddit wasn't called to testify but could be affected by any new laws.",
+      "These hearings feel more like political theater than actual oversight.",
+      "I'm concerned about how potential regulation could affect smaller platforms like Reddit."
+    ]
+  },
+  {
+    "event": {
+      "date": "2019-10-10",
+      "event": "Blizzard bans Hearthstone player for supporting Hong Kong protests",
+      "category": "gaming",
+      "impact_score": 0.67
+    },
+    "sentiment_before": 0.18,
+    "sentiment_after": -0.42,
+    "sentiment_change": -0.60,
+    "related_keywords": ["blizzard", "hongkong", "boycott", "freedom", "censorship"],
+    "conversation_samples": [
+      "I'm deleting my Blizzard account after 10 years. This is unacceptable censorship.",
+      "The gaming community needs to stand with Hong Kong against corporate censorship.",
+      "Blizzard is clearly putting Chinese market access over freedom of expression.",
+      "It's amazing how united the gaming subreddits are against Blizzard right now.",
+      "Even Blizzard employees are covering up the company values on their campus statue."
+    ]
+  },
+  {
+    "event": {
+      "date": "2019-11-20",
+      "event": "Cybertruck unveiling by Tesla",
+      "category": "technology",
+      "impact_score": 0.72
+    },
+    "sentiment_before": 0.08,
+    "sentiment_after": 0.58,
+    "sentiment_change": 0.50,
+    "related_keywords": ["cybertruck", "tesla", "musk", "electric", "design"],
+    "conversation_samples": [
+      "I can't believe that's the actual design. It looks like a PS1 vehicle model.",
+      "Say what you want about the design, but the specs are actually impressive.",
+      "The window breaking demonstration fail was the best part of the unveiling.",
+      "I've already put down a deposit - this thing is going to revolutionize trucks.",
+      "Elon's presentation was awkward but the Cybertruck is definitely conversation-worthy."
+    ]
+  },
+  {
+    "event": {
+      "date": "2020-11-07",
+      "event": "U.S. Election results called for Biden",
+      "category": "politics",
+      "impact_score": 0.85
+    },
+    "sentiment_before": 0.32,
+    "sentiment_after": 0.71,
+    "sentiment_change": 0.39,
+    "related_keywords": ["biden", "results", "president", "count", "victory"],
+    "conversation_samples": [
+      "The election has finally been called after days of counting. What a relief!",
+      "The celebrations in major cities are all over the front page of Reddit.",
+      "I'm just glad we can finally move on from the election coverage.",
+      "The response across different subreddits seems mostly positive so far.",
+      "I hope this leads to less political division across Reddit communities."
+    ]
+  },
+  {
+    "event": {
+      "date": "2019-11-25",
+      "event": "Major Reddit outage affecting multiple subreddits",
+      "category": "platform",
+      "impact_score": 0.64
+    },
+    "sentiment_before": 0.15,
+    "sentiment_after": -0.32,
+    "sentiment_change": -0.47,
+    "related_keywords": ["outage", "down", "servers", "loading", "error"],
+    "conversation_samples": [
+      "Reddit is down AGAIN? This has been happening way too frequently lately.",
+      "I can't access half the subreddits I subscribe to right now.",
+      "The mobile app is completely unusable during this outage.",
+      "Anyone else noticing that popular subreddits are working but smaller ones aren't?",
+      "According to the status page this is the third major outage this month."
+    ]
+  },
+  {
+    "event": {
+      "date": "2020-10-15",
+      "event": "Reddit experiences widespread content filtering issue",
+      "category": "platform",
+      "impact_score": 0.43
+    },
+    "sentiment_before": 0.22,
+    "sentiment_after": -0.19,
+    "sentiment_change": -0.41,
+    "related_keywords": ["filter", "removed", "automod", "shadowban", "censorship"],
+    "conversation_samples": [
+      "Anyone else noticing legitimate posts getting auto-removed today?",
+      "Moderators across multiple subreddits are reporting issues with the spam filter.",
+      "I've had 5 posts removed today with no explanation. Something's broken.",
+      "It seems like Reddit's content filtering system is being overly aggressive.",
+      "Admins have acknowledged the issue but haven't provided an ETA for a fix."
+    ]
+  }
+] 

@@ -1,6 +1,6 @@
 Title	Body	Labels
 Scaffold project structure	**Description:** Create GitHub repo and add top-level folders:/data_ingestion  /pyspark_jobs  /frontend  /infra  /docs  /tests.	infra
-Download raw Reddit data	**Description:** Write `download arctic shift` to pull monthly dumps (2008-present) or guide users through the Arctic-Shift UI export.	data-ingestion
+Download raw Reddit data	**Description:** Write `download arctic shift` to pull monthly dumps (2019-present) or guide users through the Arctic-Shift UI export.	data-ingestion
 Explore raw schema	**Description:** Notebook that loads one month, prints JSON schema, and basic counts per subreddit and does all the EDA analysis needed.	data-ingestion
 Preprocess & clean posts	**Description:** PySpark job `clean_posts.py`: flatten JSON, drop deleted/removed, keep English, convert to Parquet files.	etl
 Upload cleaned data to S3	**Description:** Script or Makefile target that copies Parquet to an S3 bucket path `s3://mh-trends/cleaned/`.	data-ingestion,infra

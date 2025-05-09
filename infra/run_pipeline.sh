@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-# Configuration
+#Configuration
 DATA_DIR="/data"
 RAW_DIR="${DATA_DIR}/raw"
 PROCESSED_DIR="${DATA_DIR}/processed"
 ANALYTICS_DIR="${DATA_DIR}/analytics"
 S3_BUCKET="mh-trends"
 
-# Create directories if they don't exist
+#Create directories if they don't exist
 mkdir -p ${RAW_DIR}
 mkdir -p ${PROCESSED_DIR}
 mkdir -p ${ANALYTICS_DIR}/sentiment
