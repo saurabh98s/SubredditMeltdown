@@ -1,0 +1,320 @@
+[
+  {
+    "date": "2019-10-01",
+    "event": "Reddit launches AITA (Am I The Asshole) community awards",
+    "category": "platform",
+    "impact_score": 0.32
+  },
+  {
+    "date": "2019-10-10",
+    "event": "Blizzard bans Hearthstone player for supporting Hong Kong protests",
+    "category": "gaming",
+    "impact_score": 0.67
+  },
+  {
+    "date": "2019-10-15",
+    "event": "Reddit implements new award system sitewide",
+    "category": "platform",
+    "impact_score": 0.28
+  },
+  {
+    "date": "2019-10-23",
+    "event": "Reddit's mobile app reaches 50 million downloads",
+    "category": "platform",
+    "impact_score": 0.19
+  },
+  {
+    "date": "2019-10-28",
+    "event": "Google announces acquisition of Fitbit",
+    "category": "technology",
+    "impact_score": 0.45
+  },
+  {
+    "date": "2019-11-01",
+    "event": "Diablo 4 announced at BlizzCon",
+    "category": "gaming",
+    "impact_score": 0.58
+  },
+  {
+    "date": "2019-11-05",
+    "event": "Reddit introduces 'Community Points' in test subreddits",
+    "category": "platform",
+    "impact_score": 0.41
+  },
+  {
+    "date": "2019-11-08",
+    "event": "Death Stranding released for PlayStation 4",
+    "category": "gaming",
+    "impact_score": 0.47
+  },
+  {
+    "date": "2019-11-12",
+    "event": "Disney+ streaming service launches",
+    "category": "technology",
+    "impact_score": 0.55
+  },
+  {
+    "date": "2019-11-13",
+    "event": "Reddit's 'Popular' tab algorithm changes announced",
+    "category": "platform",
+    "impact_score": 0.58
+  },
+  {
+    "date": "2019-11-15",
+    "event": "Star Wars Jedi: Fallen Order released",
+    "category": "gaming",
+    "impact_score": 0.42
+  },
+  {
+    "date": "2019-11-19",
+    "event": "Google Stadia cloud gaming service launches",
+    "category": "gaming",
+    "impact_score": 0.39
+  },
+  {
+    "date": "2019-11-20",
+    "event": "Cybertruck unveiling by Tesla",
+    "category": "technology",
+    "impact_score": 0.72
+  },
+  {
+    "date": "2019-11-25",
+    "event": "Major Reddit outage affecting multiple subreddits",
+    "category": "platform",
+    "impact_score": 0.64
+  },
+  {
+    "date": "2019-12-12",
+    "event": "UK general election results announced",
+    "category": "politics",
+    "impact_score": 0.68
+  },
+  {
+    "date": "2019-12-20",
+    "event": "The Witcher series premieres on Netflix",
+    "category": "entertainment",
+    "impact_score": 0.51
+  },
+  {
+    "date": "2020-01-03",
+    "event": "US drone strike kills Iranian general Qasem Soleimani",
+    "category": "politics",
+    "impact_score": 0.79
+  },
+  {
+    "date": "2020-01-26",
+    "event": "Basketball legend Kobe Bryant dies in helicopter crash",
+    "category": "news",
+    "impact_score": 0.86
+  },
+  {
+    "date": "2020-02-02",
+    "event": "Kansas City Chiefs win Super Bowl LIV",
+    "category": "sports",
+    "impact_score": 0.45
+  },
+  {
+    "date": "2020-02-11",
+    "event": "Reddit receives $300M investment from Tencent",
+    "category": "platform",
+    "impact_score": 0.64
+  },
+  {
+    "date": "2020-03-11",
+    "event": "WHO declares COVID-19 a global pandemic",
+    "category": "pandemic",
+    "impact_score": 0.95
+  },
+  {
+    "date": "2020-03-13",
+    "event": "E3 2020 cancelled due to COVID-19 concerns",
+    "category": "gaming",
+    "impact_score": 0.51
+  },
+  {
+    "date": "2020-03-20",
+    "event": "Animal Crossing: New Horizons released",
+    "category": "gaming",
+    "impact_score": 0.63
+  },
+  {
+    "date": "2020-04-03",
+    "event": "Resident Evil 3 Remake released",
+    "category": "gaming",
+    "impact_score": 0.36
+  },
+  {
+    "date": "2020-04-10",
+    "event": "Final Fantasy VII Remake released",
+    "category": "gaming",
+    "impact_score": 0.58
+  },
+  {
+    "date": "2020-05-12",
+    "event": "Reddit announces permanent remote work policy",
+    "category": "platform",
+    "impact_score": 0.32
+  },
+  {
+    "date": "2020-05-25",
+    "event": "George Floyd killed, sparking global protests",
+    "category": "politics",
+    "impact_score": 0.94
+  },
+  {
+    "date": "2020-05-26",
+    "event": "Twitter begins fact-checking Trump's tweets",
+    "category": "technology",
+    "impact_score": 0.67
+  },
+  {
+    "date": "2020-06-01",
+    "event": "Reddit communities go dark in protest",
+    "category": "platform",
+    "impact_score": 0.83
+  },
+  {
+    "date": "2020-06-17",
+    "event": "The Last of Us Part II released",
+    "category": "gaming",
+    "impact_score": 0.74
+  },
+  {
+    "date": "2020-06-29",
+    "event": "Reddit bans approximately 2,000 subreddits including r/The_Donald",
+    "category": "platform",
+    "impact_score": 0.91
+  },
+  {
+    "date": "2020-07-17",
+    "event": "Ghost of Tsushima released",
+    "category": "gaming",
+    "impact_score": 0.48
+  },
+  {
+    "date": "2020-08-19",
+    "event": "Epic Games sues Apple over App Store policies",
+    "category": "technology",
+    "impact_score": 0.61
+  },
+  {
+    "date": "2020-09-04",
+    "event": "Marvel's Avengers game released to mixed reviews",
+    "category": "gaming",
+    "impact_score": 0.43
+  },
+  {
+    "date": "2020-09-18",
+    "event": "Justice Ruth Bader Ginsburg dies",
+    "category": "politics",
+    "impact_score": 0.84
+  },
+  {
+    "date": "2020-09-22",
+    "event": "Microsoft announces acquisition of ZeniMax Media/Bethesda",
+    "category": "gaming",
+    "impact_score": 0.72
+  },
+  {
+    "date": "2020-10-01",
+    "event": "President Trump tests positive for COVID-19",
+    "category": "politics",
+    "impact_score": 0.76
+  },
+  {
+    "date": "2020-10-05",
+    "event": "Reddit introduces new content warning labels",
+    "category": "platform",
+    "impact_score": 0.31
+  },
+  {
+    "date": "2020-10-12",
+    "event": "Reddit launches new features for moderators",
+    "category": "platform",
+    "impact_score": 0.25
+  },
+  {
+    "date": "2020-10-15",
+    "event": "Reddit experiences widespread content filtering issue",
+    "category": "platform",
+    "impact_score": 0.43
+  },
+  {
+    "date": "2020-10-28",
+    "event": "U.S. Senate hearings with social media CEOs",
+    "category": "politics",
+    "impact_score": 0.55
+  },
+  {
+    "date": "2020-11-03",
+    "event": "U.S. Presidential Election",
+    "category": "politics",
+    "impact_score": 0.89
+  },
+  {
+    "date": "2020-11-07",
+    "event": "U.S. Election results called for Biden",
+    "category": "politics",
+    "impact_score": 0.85
+  },
+  {
+    "date": "2020-11-10",
+    "event": "PlayStation 5 released",
+    "category": "gaming",
+    "impact_score": 0.69
+  },
+  {
+    "date": "2020-11-10",
+    "event": "Xbox Series X/S released",
+    "category": "gaming",
+    "impact_score": 0.66
+  },
+  {
+    "date": "2020-11-15",
+    "event": "Reddit updates content policy enforcement",
+    "category": "platform",
+    "impact_score": 0.37
+  },
+  {
+    "date": "2020-11-19",
+    "event": "Cyberpunk 2077 delayed again",
+    "category": "gaming",
+    "impact_score": 0.57
+  },
+  {
+    "date": "2020-11-25",
+    "event": "Reddit experiences moderation tool outage",
+    "category": "platform",
+    "impact_score": 0.29
+  },
+  {
+    "date": "2020-12-02",
+    "event": "UK approves first COVID-19 vaccine",
+    "category": "pandemic",
+    "impact_score": 0.71
+  },
+  {
+    "date": "2020-12-10",
+    "event": "Cyberpunk 2077 released with numerous bugs and performance issues",
+    "category": "gaming",
+    "impact_score": 0.88
+  },
+  {
+    "date": "2020-12-14",
+    "event": "First US COVID-19 vaccinations begin",
+    "category": "pandemic",
+    "impact_score": 0.75
+  },
+  {
+    "date": "2020-12-21",
+    "event": "Congress passes $900 billion pandemic relief package",
+    "category": "politics",
+    "impact_score": 0.69
+  },
+  {
+    "date": "2020-12-31",
+    "event": "Brexit transition period ends",
+    "category": "politics",
+    "impact_score": 0.61
+  }
+] 

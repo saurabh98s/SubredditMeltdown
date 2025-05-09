@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchSentiment } from '../api/api';
 import {
   LineChart,
   Line,
@@ -6,13 +7,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
-  ResponsiveContainer,
-  TooltipProps,
+  ResponsiveContainer
 } from 'recharts';
-import { fetchSentiment, SentimentData } from '../api/api';
-import { format, parseISO } from 'date-fns';
-import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 interface SentimentChartProps {
   subreddit: string;
@@ -20,22 +16,21 @@ interface SentimentChartProps {
   endDate: string;
 }
 
-interface SentimentDataWithFormat extends SentimentData {
-  formattedDate: string;
-}
-
-const SentimentChart: React.FC<SentimentChartProps> = ({
+const SentimentChart: React.FC<SentimentChartProps> = ({ 
   subreddit,
   startDate,
-  endDate,
+  endDate
 }) => {
-  const [sentimentData, setSentimentData] = useState<SentimentData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [sentimentData, setSentimentData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!subreddit) return;
+    const getSentimentData = async () => {
+      if (!subreddit) {
+        setLoading(false);
+        return;
+      }
       
       setLoading(true);
       setError(null);
@@ -44,46 +39,75 @@ const SentimentChart: React.FC<SentimentChartProps> = ({
         const data = await fetchSentiment(subreddit, startDate, endDate);
         setSentimentData(data);
       } catch (err) {
+        console.error('Error fetching sentiment data:', err);
         setError('Failed to load sentiment data');
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    getSentimentData();
   }, [subreddit, startDate, endDate]);
 
-  const formatDate = (dateStr: string) => {
-    try {
-      return format(parseISO(dateStr), 'MMM d, yyyy');
-    } catch (e) {
-      return dateStr;
-    }
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-16">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--scale-accent)]"></div>
+      </div>
+    );
+  }
 
-  // Format data for chart
-  const chartData = sentimentData.map((item) => ({
-    ...item,
-    formattedDate: formatDate(item.date),
-  }));
+  if (error) {
+    return (
+      <div className="text-red-500 text-center py-8 bg-red-50 rounded-lg p-4">
+        <div className="mb-2">⚠️ Error</div>
+        <div>{error}</div>
+      </div>
+    );
+  }
 
-  // Custom tooltip
-  const CustomTooltip = ({ 
-    active, 
-    payload, 
-    label 
-  }: TooltipProps<ValueType, NameType>) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload as SentimentDataWithFormat;
-      return (
-        <div className="bg-white p-4 border border-gray-300 shadow-md rounded-md">
-          <p className="font-semibold">{data.formattedDate}</p>
-          <p>
-            Sentiment: <span className="font-medium">{data.avg_sentiment.toFixed(3)}</span>
+  if (!subreddit) {
+    return (
+      <div className="text-center py-8">
+        <div className="bg-[var(--scale-bg-light)] p-8 rounded-lg">
+          <h3 className="text-lg font-medium mb-2">No Subreddit Selected</h3>
+          <p className="text-[var(--scale-text-secondary)]">
+            Please select a subreddit to view sentiment data.
           </p>
-          <p>
-            Posts: <span className="font-medium">{data.post_count}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (sentimentData.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <div className="bg-[var(--scale-bg-light)] p-8 rounded-lg">
+          <h3 className="text-lg font-medium mb-2">No Data Available</h3>
+          <p className="text-[var(--scale-text-secondary)]">
+            No sentiment data is available for r/{subreddit} during this period ({startDate} to {endDate}).
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Find min and max sentiment values for y-axis configuration
+  const sentiments = sentimentData.map(item => item.avg_sentiment);
+  const minSentiment = Math.min(...sentiments) - 0.1;
+  const maxSentiment = Math.max(...sentiments) + 0.1;
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 shadow-lg rounded border border-[var(--scale-border)]">
+          <p className="font-medium">{label}</p>
+          <p className="text-sm">
+            Sentiment: <span className="font-semibold">{payload[0].value.toFixed(3)}</span>
+          </p>
+          <p className="text-sm">
+            Posts: <span className="font-semibold">{payload[0].payload.post_count}</span>
           </p>
         </div>
       );
@@ -91,53 +115,46 @@ const SentimentChart: React.FC<SentimentChartProps> = ({
     return null;
   };
 
-  if (loading) {
-    return <div className="flex justify-center py-8">Loading sentiment data...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 py-8">{error}</div>;
-  }
-
-  if (sentimentData.length === 0) {
-    return (
-      <div className="flex justify-center py-8">
-        No sentiment data available for r/{subreddit} in the selected date range.
-      </div>
-    );
-  }
+  // Custom tick formatter for X axis to prevent overcrowding
+  const formatXAxis = (value: string) => {
+    // Show only some of the dates to avoid overcrowding
+    const idx = sentimentData.findIndex(item => item.date === value);
+    if (sentimentData.length <= 10 || idx % Math.ceil(sentimentData.length / 10) === 0) {
+      return value;
+    }
+    return '';
+  };
 
   return (
-    <div className="h-96">
+    <div style={{ width: '100%', height: 400 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={chartData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          data={sentimentData}
+          margin={{ top: 20, right: 30, left: 0, bottom: 25 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
           <XAxis 
             dataKey="date" 
-            tickFormatter={formatDate}
-            minTickGap={50}
+            angle={-45} 
+            textAnchor="end" 
+            height={60} 
+            tickFormatter={formatXAxis}
+            stroke="var(--scale-text-light)"
+            tick={{ fill: 'var(--scale-text-light)', fontSize: 12 }}
           />
-          <YAxis
-            domain={[-1, 1]}
-            label={{ 
-              value: 'Sentiment Score', 
-              angle: -90, 
-              position: 'insideLeft',
-              style: { textAnchor: 'middle' }
-            }}
+          <YAxis 
+            domain={[minSentiment, maxSentiment]}
+            tickFormatter={(value) => value.toFixed(2)}
+            stroke="var(--scale-text-light)"
+            tick={{ fill: 'var(--scale-text-light)', fontSize: 12 }}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="avg_sentiment"
-            stroke="#8884d8"
+          <Line 
+            type="monotone" 
+            dataKey="avg_sentiment" 
             name="Sentiment"
-            activeDot={{ r: 8 }}
-            strokeWidth={2}
+            stroke="var(--scale-accent)" 
+            activeDot={{ r: 6 }} 
           />
         </LineChart>
       </ResponsiveContainer>

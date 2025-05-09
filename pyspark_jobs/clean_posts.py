@@ -38,7 +38,7 @@ comment_schema = StructType([
     StructField("selftext", StringType(), True),
     StructField("created_utc", StringType(), True),
     StructField("score", StringType(), True),
-    StructField("num_comments", StringType(), True),
+    StructField("parent_id", StringType(), True),
 ])
 
 # Function to detect language
@@ -173,7 +173,7 @@ def process_comments(spark, input_dir, output_path):
         logger.warning("No comment data found to process")
         return
     
-    #Clean and filter comments
+    # Clean and filter comments
     cleaned_comments = all_comments.filter(
         # Filter out deleted/removed content
         (col("body").isNotNull()) &
@@ -209,7 +209,7 @@ def test_s3_connection(s3_endpoint, s3_access_key, s3_secret_key, bucket_name, r
     logger.info(f"S3 Secret Key present: {'Yes' if s3_secret_key else 'No'}")
 
     try:
-        #Configure S3 client
+        # Configure S3 client
         s3_client = boto3.client(
             "s3",
             endpoint_url=s3_endpoint,
@@ -218,12 +218,12 @@ def test_s3_connection(s3_endpoint, s3_access_key, s3_secret_key, bucket_name, r
             region_name="us-east-1",
         )
         
-        #Test connection by listing buckets
+        # Test connection by listing buckets
         response = s3_client.list_buckets()
         buckets = [bucket['Name'] for bucket in response['Buckets']]
         logger.info(f"Available buckets: {buckets}")
         
-        #Check if our bucket exists
+        # Check if our bucket exists
         bucket_exists = bucket_name in buckets
         if not bucket_exists:
             logger.info(f"Bucket '{bucket_name}' doesn't exist, creating it")
@@ -232,7 +232,7 @@ def test_s3_connection(s3_endpoint, s3_access_key, s3_secret_key, bucket_name, r
         else:
             logger.info(f"Bucket '{bucket_name}' already exists")
         
-        #Create required prefixes (folders)
+        # Create required prefixes (folders)
         if required_prefixes:
             for prefix in required_prefixes:
                 prefix_path = f"{prefix}/"
@@ -334,7 +334,7 @@ def main():
             logger.error("Failed to connect to S3. Processing will continue but data won't be uploaded.")
             args.upload_to_s3 = False
     
-    #Create Spark session
+    # Create Spark session
     spark = SparkSession.builder \
         .appName("Reddit Data Cleaning") \
         .config("spark.driver.memory", "1g") \
@@ -354,7 +354,7 @@ def main():
     
     input_dir = args.input_dir
     
-    #Filter for specific subreddits if provided
+    # Filter for specific subreddits if provided
     subreddit_dirs = []
     if args.subreddits:
         for subreddit in args.subreddits:
@@ -364,7 +364,7 @@ def main():
             else:
                 logger.warning(f"Subreddit directory not found: {subreddit_path}")
     else:
-        #Use all subreddit directories
+        # Use all subreddit directories
         subreddit_dirs = [os.path.join(input_dir, d) for d in os.listdir(input_dir) 
                           if os.path.isdir(os.path.join(input_dir, d)) and d != ".ipynb_checkpoints"]
     
@@ -378,7 +378,7 @@ def main():
         submissions_count = 0
         comments_count = 0
         
-        #Process each subreddit directory
+        # Process each subreddit directory
         for subreddit_dir in subreddit_dirs:
             subreddit_name = os.path.basename(subreddit_dir)
             logger.info(f"Processing subreddit: {subreddit_name}")
@@ -386,7 +386,7 @@ def main():
             subreddit_submissions_output = os.path.join(submissions_output, subreddit_name)
             subreddit_comments_output = os.path.join(comments_output, subreddit_name)
             
-            #Process submissions
+            # Process submissions
             if args.content_type in ["submissions", "all"]:
                 count = process_submissions(spark, subreddit_dir, subreddit_submissions_output)
                 if count:
