@@ -1,0 +1,250 @@
+{
+  "worldnews": [
+    {
+      "keyword": "election",
+      "weight": 5823,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "covid",
+      "weight": 4927,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "vaccine",
+      "weight": 3842,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "biden",
+      "weight": 3625,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "trump",
+      "weight": 3419,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "china",
+      "weight": 2983,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "climate",
+      "weight": 2756,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "pandemic",
+      "weight": 2534,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "brexit",
+      "weight": 2218,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    },
+    {
+      "keyword": "protest",
+      "weight": 1945,
+      "timeframe": "weekly",
+      "subreddit": "worldnews"
+    }
+  ],
+  "politics": [
+    {
+      "keyword": "election",
+      "weight": 7834,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "biden",
+      "weight": 6920,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "trump",
+      "weight": 6754,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "senate",
+      "weight": 4562,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "congress",
+      "weight": 3891,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "stimulus",
+      "weight": 3752,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "vote",
+      "weight": 3567,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "georgia",
+      "weight": 3124,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "democrat",
+      "weight": 3056,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    },
+    {
+      "keyword": "republican",
+      "weight": 2987,
+      "timeframe": "weekly",
+      "subreddit": "politics"
+    }
+  ],
+  "fitness": [
+    {
+      "keyword": "workout",
+      "weight": 4256,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "weight",
+      "weight": 3821,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "protein",
+      "weight": 3475,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "muscle",
+      "weight": 3214,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "cardio",
+      "weight": 2856,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "squat",
+      "weight": 2543,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "bench",
+      "weight": 2345,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "deadlift",
+      "weight": 2211,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "diet",
+      "weight": 2087,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    },
+    {
+      "keyword": "calories",
+      "weight": 1923,
+      "timeframe": "weekly",
+      "subreddit": "fitness"
+    }
+  ],
+  "antiwork": [
+    {
+      "keyword": "manager",
+      "weight": 5276,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "quit",
+      "weight": 4823,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "salary",
+      "weight": 4612,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "company",
+      "weight": 4289,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "corporation",
+      "weight": 3962,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "workplace",
+      "weight": 3645,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "minimum",
+      "weight": 3512,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "employees",
+      "weight": 3389,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "benefits",
+      "weight": 3154,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    },
+    {
+      "keyword": "unemployment",
+      "weight": 2876,
+      "timeframe": "weekly",
+      "subreddit": "antiwork"
+    }
+  ]
+} 

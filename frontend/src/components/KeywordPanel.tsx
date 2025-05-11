@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { fetchKeywords, KeywordData } from '../api/api';
+import { fetchKeywords, fetchSentimentKeywords, KeywordData } from '../api/api';
+import WordCloud from './WordCloud';
 
 interface KeywordPanelProps {
   subreddit: string;
@@ -8,6 +9,11 @@ interface KeywordPanelProps {
 
 const KeywordPanel: React.FC<KeywordPanelProps> = ({ subreddit, timeframe }) => {
   const [keywords, setKeywords] = useState<KeywordData[]>([]);
+  const [sentimentKeywords, setSentimentKeywords] = useState<{
+    positive: KeywordData[];
+    negative: KeywordData[];
+  }>({ positive: [], negative: [] });
+  const [activeTab, setActiveTab] = useState<'all' | 'positive' | 'negative'>('all');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +25,13 @@ const KeywordPanel: React.FC<KeywordPanelProps> = ({ subreddit, timeframe }) => 
       setError(null);
       
       try {
+        // Fetch regular keywords
         const data = await fetchKeywords(subreddit, timeframe);
         setKeywords(data);
+        
+        // Fetch sentiment-based keywords
+        const sentimentData = await fetchSentimentKeywords(subreddit, timeframe);
+        setSentimentKeywords(sentimentData);
       } catch (err) {
         setError('Failed to load keyword data');
         console.error(err);
@@ -40,7 +51,7 @@ const KeywordPanel: React.FC<KeywordPanelProps> = ({ subreddit, timeframe }) => 
     return <div className="py-8 text-red-500">{error}</div>;
   }
 
-  if (keywords.length === 0) {
+  if (keywords.length === 0 && sentimentKeywords.positive.length === 0 && sentimentKeywords.negative.length === 0) {
     return (
       <div className="py-8 text-center">
         No keyword data available for r/{subreddit} in the selected timeframe.
@@ -48,54 +59,109 @@ const KeywordPanel: React.FC<KeywordPanelProps> = ({ subreddit, timeframe }) => 
     );
   }
 
-  // Sort keywords by weight
-  const sortedKeywords = [...keywords].sort((a, b) => b.weight - a.weight);
-
   return (
     <div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {sortedKeywords.map((keyword, index) => {
-          // Calculate size based on weight (normalize between 80% and 160%)
-          const minWeight = sortedKeywords[sortedKeywords.length - 1].weight;
-          const maxWeight = sortedKeywords[0].weight;
-          const range = maxWeight - minWeight;
-          const normalizedSize = range === 0 
-            ? 100 
-            : 80 + Math.round((keyword.weight - minWeight) / range * 80);
-          
-          // Calculate color intensity based on weight
-          const colorIntensity = range === 0 
-            ? 500 
-            : 300 + Math.round((keyword.weight - minWeight) / range * 500);
-          
-          // Get appropriate color class based on intensity
-          const getColorClass = (intensity: number) => {
-            if (intensity <= 300) return 'text-indigo-300';
-            if (intensity <= 400) return 'text-indigo-400';
-            if (intensity <= 500) return 'text-indigo-500';
-            if (intensity <= 600) return 'text-indigo-600';
-            if (intensity <= 700) return 'text-indigo-700';
-            return 'text-indigo-800';
-          };
-          
-          return (
-            <div 
-              key={`${keyword.keyword}-${index}`} 
-              className="bg-indigo-50 rounded-lg p-3 flex items-center justify-center text-center"
-            >
-              <span 
-                className={`${getColorClass(colorIntensity)} font-medium`}
-                style={{ fontSize: `${normalizedSize}%` }}
-              >
-                {keyword.keyword}
-              </span>
-            </div>
-          );
-        })}
+      <div className="mb-4 text-sm bg-gray-100 rounded-lg p-2 flex justify-center">
+        <div className="inline-flex rounded-lg shadow-sm" role="group">
+          <button
+            type="button"
+            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
+              activeTab === 'all'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-white hover:bg-gray-100 text-gray-800'
+            }`}
+            onClick={() => setActiveTab('all')}
+          >
+            All Keywords
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === 'positive'
+                ? 'bg-green-600 text-white'
+                : 'bg-white hover:bg-gray-100 text-gray-800'
+            }`}
+            onClick={() => setActiveTab('positive')}
+          >
+            Positive
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
+              activeTab === 'negative'
+                ? 'bg-red-600 text-white'
+                : 'bg-white hover:bg-gray-100 text-gray-800'
+            }`}
+            onClick={() => setActiveTab('negative')}
+          >
+            Negative
+          </button>
+        </div>
       </div>
+
+      {activeTab === 'all' && (
+        <div className="mb-8">
+          <h3 className="text-lg font-medium mb-4">Top Keywords for r/{subreddit}</h3>
+          <div className="bg-white rounded-lg shadow overflow-hidden p-4">
+            <WordCloud 
+              subreddit={subreddit} 
+              timeframe={timeframe}
+              height={350}
+              width={700}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'positive' && (
+        <div>
+          <h3 className="text-lg font-medium mb-4 text-green-700">Positive Sentiment Keywords</h3>
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+            {sentimentKeywords.positive.length > 0 ? (
+              <WordCloud 
+                subreddit={subreddit} 
+                timeframe={timeframe}
+                initialActiveTab="positive"
+                height={400}
+              />
+            ) : (
+              <p className="text-center py-8 text-gray-500">No positive keywords available</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'negative' && (
+        <div>
+          <h3 className="text-lg font-medium mb-4 text-red-700">Negative Sentiment Keywords</h3>
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+            {sentimentKeywords.negative.length > 0 ? (
+              <WordCloud 
+                subreddit={subreddit} 
+                timeframe={timeframe}
+                initialActiveTab="negative"
+                height={400}
+              />
+            ) : (
+              <p className="text-center py-8 text-gray-500">No negative keywords available</p>
+            )}
+          </div>
+        </div>
+      )}
       
-      <div className="mt-4 text-right text-sm text-gray-500">
-        <span>Based on {keywords[0]?.post_count || 0} posts</span>
+      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+        <h3 className="font-semibold text-gray-800 text-lg mb-2">Keyword Analysis</h3>
+        <p className="text-gray-600 text-sm">
+          {activeTab === 'positive' && 
+            "These are the most frequently used words in positive comments and submissions."}
+          {activeTab === 'negative' && 
+            "These are the most frequently used words in negative comments and submissions."}
+          {activeTab === 'all' && 
+            "These are the most frequently used words across all submissions and comments. Words are sized based on frequency."}
+        </p>
+        <p className="text-gray-600 text-sm mt-2">
+          When analyzing sentiment, these keywords can help identify the topics that drive positive and negative discussions.
+        </p>
       </div>
     </div>
   );
